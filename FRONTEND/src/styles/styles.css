@@ -1,0 +1,12 @@
+.fc-event-main-frame {
+    white-space: normal;
+  }
+  
+  .fc-day-grid-event > .fc-content {
+    white-space: normal;
+  }
+  
+  .fc-toolbar-title {
+    color: var(--secondaryColor);
+    font-size: 1rem;
+  }
