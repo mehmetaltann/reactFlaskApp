@@ -1,17 +1,26 @@
-import React from "react";
+import { Typography, Stack, IconButton, Paper } from "@mui/material";
+import { Fragment } from "react";
 
-const InfoBox = () => {
+const InfoBox = ({ data, title }) => {
   return (
-    <Paper sx={{ p: 1 }}>
-      <Stack direction="row" alignItems={"center"} spacing={1}>
-        <Typography sx={{ color: "primary.main" }} variant="span">
-          {isletme ? isletme.unvan : ""}
+    <Fragment>
+      <Stack
+        direction="row"
+        spacing={1}
+        
+        alignItems={"center"}
+      >
+        <Typography
+          variant="subtitle1"
+          sx={{ color: "primary.main", fontWeight: 600 }}
+        >
+          {title}
         </Typography>
-        <IconButton aria-label="delete" sx={{ color: "primary.main" }}>
-          <EditIcon />
-        </IconButton>
+        <Typography sx={{ color: "primary.main" }} variant="span">
+          {data ? data : ""}
+        </Typography>
       </Stack>
-    </Paper>
+    </Fragment>
   );
 };
 

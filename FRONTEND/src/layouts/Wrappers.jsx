@@ -11,7 +11,11 @@ export const DataTableWrapper = ({ children, tableHeight, sxProps }) => {
 export const PageWrapper = ({ children, conSx, ...rest }) => {
   return (
     <Box sx={{ height: "90vh", overflow: "auto" }}>
-      <Container sx={{ mt: 2, ...conSx }} {...rest}>
+      <Container
+        maxWidth="false"
+        sx={{ mt: 2, width: { xs: "100%", xl: "90%" }, ...conSx }}
+        {...rest}
+      >
         {children}
       </Container>
     </Box>

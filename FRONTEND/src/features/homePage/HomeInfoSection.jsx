@@ -1,150 +1,75 @@
-import { useContext } from "react";
-import { Card, Typography, Stack, IconButton, Paper } from "@mui/material";
+import { Fragment, useContext } from "react";
+import { Card, Divider, Paper, Stack, Typography } from "@mui/material";
 import { WorkContext } from "../../store/AppContext";
-import InfoBox from "../../components/HomePageComp/InfoBox";
-import EditIcon from "@mui/icons-material/Edit";
+import InfoBox from "../../components/homePageComp/InfoBox";
 import Grid from "@mui/material/Unstable_Grid2";
-import InfoIcon from "@mui/icons-material/Info";
 
 const HomeInfoSection = () => {
-  const [isletme, setIsletme] = useContext(WorkContext);
+  const [isletme] = useContext(WorkContext);
+
+  if (isletme) {
+    console.log(isletme.tel1[Object.keys(isletme.tel1)[0]]);
+  }
 
   return (
-    <Card sx={{ p: 1, m: 2 }}>
-      <Grid container spacing={2}>
-        <Grid item="true">
-          <InfoBox />
-          <Paper sx={{ p: 1 }}>
-            <Stack direction="row" alignItems={"center"} spacing={1}>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                {isletme ? isletme.unvan : ""}
-              </Typography>
-              <IconButton aria-label="delete" sx={{ color: "primary.main" }}>
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          </Paper>
-        </Grid>
-        <Grid item="true">
-          <Paper sx={{ p: 1 }}>
-            <Stack direction="row" alignItems={"center"} spacing={1}>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                {isletme ? isletme.vergi : ""}
-              </Typography>
-              <IconButton aria-label="delete">
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          </Paper>
-        </Grid>
-        <Grid item="true">
-          <Paper sx={{ p: 1 }}>
-            <Stack direction="row" alignItems={"center"} spacing={1}>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                Id : {isletme ? isletme.id : ""}
-              </Typography>
+    <Fragment>
+      {isletme && (
+        <Card sx={{ mt: 1 }}>
+          <Grid
+            container
+            sx={{ p: 4 }}
+            spacing={{xs:"4", md:"3"}}
+            justifyContent={{ md: "space-between" }}
+          >
+            <Grid container item="true" direction={"column"}>
+              <Grid item="true">
+                <InfoBox data={isletme.unvan} title={"Firma :"} />
+              </Grid>
+              <Grid item="true">
+                <Stack direction={{ md: "row" }} spacing={4}>
+                  <InfoBox data={isletme.vergi} title={"Vergi No :"} />
+                  <InfoBox data={isletme.id} title={"Sistem ID :"} />
+                  <InfoBox data={isletme.bilgi} title={"Bilgi :"} />
+                </Stack>
+              </Grid>
+              <Grid item="true">
+                <InfoBox data={isletme.sektor_ismi} title={"Sektör :"} />
+              </Grid>
+            </Grid>
 
-              <IconButton aria-label="delete">
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          </Paper>
-        </Grid>
-        <Grid item="true">
-          <Paper sx={{ p: 1 }}>
-            <Stack direction="row" alignItems={"center"} spacing={1}>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                {isletme ? isletme.mail : ""}
-              </Typography>
-
-              <IconButton aria-label="delete">
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          </Paper>
-        </Grid>
-
-        <Grid item="true">
-          <Paper sx={{ p: 1 }}>
-            <Stack direction="row" alignItems={"center"} spacing={1}>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                Sektör
-              </Typography>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                {isletme ? isletme.sektor_ismi : ""}
-              </Typography>
-              <IconButton aria-label="delete" sx={{ color: "primary.main" }}>
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          </Paper>
-        </Grid>
-
-        <Grid item="true">
-          <Paper sx={{ p: 1 }}>
-            <Stack
-              direction="row"
-              alignItems={"center"}
-              spacing={1}
-              justifyContent={"center"}
-            >
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                Telefon 1
-              </Typography>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                {isletme ? isletme.tel1.numberlong : ""}
-              </Typography>
-              <IconButton aria-label="delete" sx={{ color: "primary.main" }}>
-                <EditIcon />
-              </IconButton>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                Telefon 2
-              </Typography>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                {isletme ? isletme.tel2.numberlong : ""}
-              </Typography>
-              <IconButton aria-label="delete" sx={{ color: "primary.main" }}>
-                <EditIcon />
-              </IconButton>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                Yetkili
-              </Typography>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                {isletme ? isletme.yetkili : ""}
-              </Typography>
-              <IconButton aria-label="delete" sx={{ color: "primary.main" }}>
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          </Paper>
-        </Grid>
-
-        <Grid item="true">
-          <Paper sx={{ p: 1 }}>
-            <Stack direction="row" alignItems={"center"} spacing={1}>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                Adres
-              </Typography>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                {isletme ? isletme.adres : ""}
-              </Typography>
-              <IconButton aria-label="delete" sx={{ color: "primary.main" }}>
-                <EditIcon />
-              </IconButton>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                Notlar
-              </Typography>
-              <Typography sx={{ color: "primary.main" }} variant="span">
-                {isletme ? isletme.bilgi : ""}
-              </Typography>
-              <IconButton aria-label="delete" sx={{ color: "primary.main" }}>
-                <EditIcon />
-              </IconButton>
-            </Stack>
-          </Paper>
-        </Grid>
-      </Grid>
-    </Card>
+            <Grid container item="true" direction={"column"}>
+              <Grid item="true">
+                <Stack direction={{ md: "row" }} spacing={4}>
+                  <InfoBox data={isletme.yetkili} title="Yetkili :" />
+                  <InfoBox data={isletme.mail} title="Mail :" />
+                  <Stack direction={"row"} spacing={1}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ color: "primary.main", fontWeight: 600 }}
+                    >
+                      Telefon :
+                    </Typography>
+                    <InfoBox
+                      data={isletme.tel1[Object.keys(isletme.tel1)[0]]}
+                    />
+                    <Divider orientation="vertical" flexItem />
+                    <InfoBox
+                      data={isletme.tel2[Object.keys(isletme.tel2)[0]]}
+                    />
+                  </Stack>
+                </Stack>
+              </Grid>
+              <Grid item="true">
+                <Stack direction={{ md: "row" }} spacing={4}>
+                  <InfoBox data={isletme.adres} title="Adres :" />
+                  <InfoBox title="UETS :" />
+                </Stack>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Card>
+      )}
+    </Fragment>
   );
 };
 

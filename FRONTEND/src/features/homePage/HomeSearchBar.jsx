@@ -43,13 +43,13 @@ const HomeSearchBar = () => {
   };
 
   return (
-    <Card sx={{ p: 1, m: 2 }}>
+    <Card sx={{ p: 1 }}>
       <Grid
         container
         spacing={4}
         sx={{ p: 1 }}
         alignItems={"center"}
-        justifyContent={"space-around"}
+        justifyContent={"flex-start"}
       >
         <Grid item="true" sx={{ pr: 8 }}>
           <Stack

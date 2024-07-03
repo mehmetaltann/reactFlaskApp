@@ -1,6 +1,7 @@
 import Grid from "@mui/material/Unstable_Grid2";
 import HomeSearchBar from "../features/homePage/HomeSearchBar";
 import HomeInfoSection from "../features/homePage/HomeInfoSection";
+import HomeTableSection from "../features/homePage/HomeTableSection";
 import { PageWrapper } from "../layouts/Wrappers";
 
 const Home = () => {
@@ -13,7 +14,9 @@ const Home = () => {
         <Grid xs={12}>
           <HomeInfoSection />
         </Grid>
-        <Grid></Grid>
+        <Grid xs={12}>
+          <HomeTableSection />
+        </Grid>
       </Grid>
     </PageWrapper>
   );
