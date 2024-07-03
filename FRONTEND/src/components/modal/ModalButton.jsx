@@ -9,7 +9,7 @@ const ModalButton = ({
   maxW = "35vh",
   title,
   height = { md: "70vh", xs: "80vh" },
-  color = "secondary",
+  color = "primary",
   endIconLogo = "send",
   buttonTitle = "EKLE",
   variant = "outlined",
@@ -48,8 +48,8 @@ const ModalButton = ({
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        aria-labelledby="dataForm"
-        aria-describedby="dataForm-description"
+        aria-labelledby="dataForm2"
+        aria-describedby="dataForm-description2"
       >
         <Box sx={modalStyle}>
           <Typography variant="h6">{title}</Typography>

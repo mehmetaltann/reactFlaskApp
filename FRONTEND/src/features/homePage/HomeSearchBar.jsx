@@ -1,9 +1,12 @@
 import { useState, useEffect, useContext } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import Grid from "@mui/material/Unstable_Grid2";
+import ModalButton from "../../components/modal/ModalButton";
+import IsletmeForm from "../../components/forms/IsletmeForm";
 import { WorkContext } from "../../store/AppContext";
-import { allData } from "../../utils/data";
-import { Card, TextField, Typography, Stack } from "@mui/material";
+import { isletmeData  } from "../../utils/isletmeData";
+import { sektorData } from "../../utils/sektorData";
+import { Card, TextField, Typography, Box, Stack } from "@mui/material";
 
 const HomeSearchBar = () => {
   const [searchData, setSearchData] = useState({
@@ -12,6 +15,7 @@ const HomeSearchBar = () => {
     firmaId: "",
   });
   const [isletme, setIsletme] = useContext(WorkContext);
+  const [openAddIsletmeModal, setOpenAddIsletmeModal] = useState(false);
 
   const findByVal = (sData, aData) => {
     const { unvan, vergiNo, firmaId } = sData;
@@ -27,7 +31,7 @@ const HomeSearchBar = () => {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const iData = findByVal(searchData, allData);
+      const iData = findByVal(searchData, isletmeData);
       setIsletme(iData);
     }, 1000);
 
@@ -42,64 +46,125 @@ const HomeSearchBar = () => {
     }));
   };
 
+  const submitHandler = (values) => {
+    const newRecord = {
+      unvan: values.unvan,
+      sistem_id: values.sistem_id,
+      sektor_ismi: values.sektor_ismi,
+      yetkili: values.yetkili,
+      notlar: values.notlar,
+      adres: values.adres,
+      tel1: values.tel1,
+      tel2: values.tel2,
+      projeler: [],
+      uets: values.uets,
+      mail: values.mail,
+    };
+
+    console.log(newRecord);
+
+    setOpenAddIsletmeModal(false);
+  };
+
   return (
-    <Card sx={{ p: 1 }}>
-      <Grid
-        container
-        spacing={4}
-        sx={{ p: 1 }}
-        alignItems={"center"}
-        justifyContent={"flex-start"}
+    <Card>
+      <Stack
+        sx={{ p: 1, m: 1 }}
+        alignItems={{ md: "center" }}
+        justifyContent={"space-between"}
+        direction={{ md: "row" }}
       >
-        <Grid item="true" sx={{ pr: 8 }}>
-          <Stack
-            direction="row"
-            alignItems={"center"}
-            justifyContent={"center"}
-            spacing={1}
+        <Grid
+          container
+          spacing={4}
+          sx={{ p: 1 }}
+          alignItems={"center"}
+          justifyContent={"flex-start"}
+        >
+          <Grid item="true" sx={{ pr: 8 }}>
+            <Stack
+              direction="row"
+              alignItems={"center"}
+              justifyContent={"center"}
+              spacing={1}
+            >
+              <SearchIcon sx={{ color: "primary.main" }} fontSize="large" />
+              <Typography sx={{ color: "primary.main" }} variant="h6">
+                İşletme Ara
+              </Typography>
+            </Stack>
+          </Grid>
+
+          <Grid container item="true">
+            <Grid item="true">
+              <TextField
+                disabled={
+                  searchData.firmaId !== "" || searchData.vergiNo !== ""
+                }
+                label="Unvan"
+                name="unvan"
+                variant="outlined"
+                value={searchData.unvan}
+                onChange={handleInputsChange}
+              />
+            </Grid>
+            <Grid item="true">
+              <TextField
+                disabled={searchData.firmaId !== "" || searchData.unvan !== ""}
+                label="Vergi Numarası"
+                variant="outlined"
+                name="vergiNo"
+                type="number"
+                value={searchData.vergiNo}
+                onChange={handleInputsChange}
+              />
+            </Grid>
+            <Grid item="true">
+              <TextField
+                disabled={searchData.vergiNo !== "" || searchData.unvan !== ""}
+                label="Id"
+                name="firmaId"
+                variant="outlined"
+                type="number"
+                value={searchData.firmaId}
+                onChange={handleInputsChange}
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+
+        <Box sx={{ pr: { md: 6 }, pt: { xs: 2, md: 0 } }}>
+          <ModalButton
+            title="İşletme Ekle"
+            buttonTitle="Yeni İşletme Kayıt"
+            height="65vh"
+            width="130%"
+            variant="contained"
+            modalOpen={openAddIsletmeModal}
+            setModalOpen={setOpenAddIsletmeModal}
+            size="large"
           >
-            <SearchIcon sx={{ color: "primary.main" }} fontSize="large" />
-            <Typography sx={{ color: "primary.main" }} variant="h6">
-              İşletme Ara
-            </Typography>
-          </Stack>
-        </Grid>
-        
-        <Grid container item="true">
-          <Grid item="true">
-            <TextField
-              disabled={searchData.firmaId !== "" || searchData.vergiNo !== ""}
-              label="Unvan"
-              name="unvan"
-              variant="outlined"
-              value={searchData.unvan}
-              onChange={handleInputsChange}
+            <IsletmeForm
+              submitHandler={submitHandler}
+              sektorData={sektorData}
+              initialData={{
+                unvan: "",
+                vergi: "",
+                sistem_id: "",
+                sektor_ismi: "",
+                yetkili: "",
+                notlar: "",
+                adres: "",
+                tel1: "",
+                tel2: "",
+                projeler: [],
+                uets: "",
+                mail: "",
+              }}
             />
-          </Grid>
-          <Grid item="true">
-            <TextField
-              disabled={searchData.firmaId !== "" || searchData.unvan !== ""}
-              label="Vergi Numarası"
-              variant="outlined"
-              name="vergiNo"
-              type="number"
-              value={searchData.vergiNo}
-              onChange={handleInputsChange}
-            />
-          </Grid>
-          <Grid item="true">
-            <TextField
-              disabled={searchData.vergiNo !== "" || searchData.unvan !== ""}
-              label="Id"
-              name="firmaId"
-              variant="outlined"
-              type="number"
-              value={searchData.firmaId}
-              onChange={handleInputsChange}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
+          </ModalButton>
+        </Box>
+      </Stack>
     </Card>
   );
 };
