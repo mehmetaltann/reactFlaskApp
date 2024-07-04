@@ -33,19 +33,19 @@ export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
             <Stack direction={"row"}>
               <FormTextField
                 sx={{ width: "100%" }}
-                name="vergi"
+                name="vergiNo"
                 label="Vergi No"
                 size="small"
               />
               <FormTextField
                 sx={{ width: "100%" }}
-                name="sistem_id"
+                name="sistemId"
                 label="Sistem ID"
                 size="small"
               />
             </Stack>
 
-            <Field name="sektor_ismi" component={FormSelect} label="Sektör">
+            <Field name="naceKodu" component={FormSelect} label="Sektör">
               {sektorData?.map(({ isim }, index) => (
                 <MenuItem value={isim} key={index}>
                   {isim}

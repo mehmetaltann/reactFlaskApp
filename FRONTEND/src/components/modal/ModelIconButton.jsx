@@ -35,18 +35,26 @@ const ModalIconButton = ({
       >
         <EditIcon />
       </IconButton>
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="dataForm"
-        aria-describedby="dataForm-description"
+      <Box
+        sx={{
+          outline: 0,
+          border: "none",
+        }}
       >
-        <Box sx={modalStyle}>
-          <Typography variant="h6">{title}</Typography>
-          <Divider sx={{ mb: 2 }} />
-          {children}
-        </Box>
-      </Modal>
+        <Modal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          sx={{ "& .MuiBackdrop-root": { backgroundColor: "transparent" } }}
+          aria-labelledby="dataForm"
+          aria-describedby="dataForm-description"
+        >
+          <Box sx={modalStyle}>
+            <Typography variant="h6">{title}</Typography>
+            <Divider sx={{ mb: 2 }} />
+            {children}
+          </Box>
+        </Modal>
+      </Box>
     </Fragment>
   );
 };

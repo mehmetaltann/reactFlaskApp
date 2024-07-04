@@ -10,7 +10,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TablePagination,
   TableSortLabel,
 } from "@mui/material";
 
@@ -72,7 +71,7 @@ const HomeTableSection = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {isletme.projeler.map((item, index) => (
+                {isletme.projeler.toReversed().map((item, index) => (
                   <HomeTableRow data={item} key={index} pIndex={index} />
                 ))}
               </TableBody>

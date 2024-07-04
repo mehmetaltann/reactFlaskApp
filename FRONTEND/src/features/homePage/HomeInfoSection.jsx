@@ -37,13 +37,15 @@ const HomeInfoSection = () => {
     setOpenUpdateIsletmeModal(false);
   };
 
+  /* isletme.tel1[Object.keys(isletme.tel1)[0]] */
+
   return (
     <Fragment>
       {isletme && (
         <Card sx={{ mt: 1 }}>
           <Grid
             container
-            sx={{ p: 4 }}
+            sx={{ p: 3 }}
             spacing={{ xs: "4", md: "3" }}
             justifyContent={{ md: "space-between" }}
           >
@@ -76,13 +78,10 @@ const HomeInfoSection = () => {
                     >
                       Telefon :
                     </Typography>
-                    <InfoBox
-                      data={isletme.tel1[Object.keys(isletme.tel1)[0]]}
-                    />
+                    <InfoBox data={isletme.tel1} />
+
                     <Divider orientation="vertical" />
-                    <InfoBox
-                      data={isletme.tel2[Object.keys(isletme.tel2)[0]]}
-                    />
+                    <InfoBox data={isletme.tel2} />
                   </Stack>
                 </Stack>
               </Grid>

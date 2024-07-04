@@ -7,6 +7,7 @@ const ModalButton = ({
   children,
   minW = "25vh",
   maxW = "35vh",
+  maxh = "7vh",
   title,
   height = { md: "70vh", xs: "80vh" },
   color = "primary",
@@ -23,7 +24,7 @@ const ModalButton = ({
     top: "40%",
     left: "50%",
     height: height,
-    width: { md: "40%", sm: "55%", xs: "85%", lg: "30%" },
+    width: { xs: "85%", sm: "65%", md: "60%", lg: "40%", xl: "35%" },
     overflow: "auto",
     transform: "translate(-50%, -50%)",
     bgcolor: "background.paper",
@@ -40,7 +41,7 @@ const ModalButton = ({
         variant={variant}
         startIcon={icon}
         endIcon={endIconLogo === "send" ? <SendIcon /> : <PlaylistAddIcon />}
-        sx={{ minWidth: minW, maxWidth: maxW }}
+        sx={{ minWidth: minW, maxWidth: maxW, maxHeight: maxh }}
         onClick={() => setModalOpen(true)}
       >
         {buttonTitle}

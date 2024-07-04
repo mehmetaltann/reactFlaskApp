@@ -4,6 +4,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ProjeForm from "../../components/forms/ProjeForm";
 import OdemeForm from "../../components/forms/OdemeForm";
 import ModalIconButton from "../../components/modal/ModelIconButton";
+import { dateFormat } from "../../utils/time-functions";
+import { sektorData } from "../../utils/sektorData";
+import { destekData } from "../../utils/destekData";
 import { Fragment, useState } from "react";
 import {
   Table,
@@ -18,16 +21,17 @@ import {
 
 const HomeTableRow = ({ data, pIndex }) => {
   const {
-    baslama_tarihi,
-    durum,
     id,
-    takip_tarihi,
-    tamamlanma_tarihi,
-    odemeler,
-    sure,
-    program_ismi,
-    izleyici,
+    isletmeId,
+    baslamaTarihi,
+    tamamlanmaTarihi,
+    takipTarihi,
     notlar,
+    sure,
+    program,
+    izleyici,
+    durum,
+    odemeler,
   } = data;
 
   const [open, setOpen] = useState(false);
@@ -37,6 +41,38 @@ const HomeTableRow = ({ data, pIndex }) => {
   const totalPayment = odemeler
     .reduce((n, { tutar }) => n + tutar, 0)
     .toFixed(2);
+
+  const projeEditSubmitHandler = (values) => {
+    const editProjeRecord = {
+      id: values.id,
+      isletmeId: values.isletmeId,
+      baslamaTarihi: values.baslamaTarihi,
+      tamamlanmaTarihi: values.tamamlanmaTarihi,
+      takipTarihi: values.takipTarihi,
+      notlar: values.notlar,
+      sure: values.sure,
+      program: values.program,
+      izleyici: values.izleyici,
+      durum: values.durum,
+      odemeler: values.odemeler,
+    };
+
+    setOpenEditProjeModal(false);
+  };
+
+  const odemeEditSubmitHandler = (values) => {
+    const editOdemeRecord = {
+      id: values.id,
+      projeId: values.projeId,
+      karekod: values.karekod,
+      tarih: values.tarih,
+      tutar: values.tutar,
+      destek: values.destek,
+      durum: values.durum,
+    };
+
+    setOpenEditOdemeModal(false);
+  };
 
   return (
     <Fragment>
@@ -54,20 +90,24 @@ const HomeTableRow = ({ data, pIndex }) => {
         <TableCell component="th" scope="row" width="1%">
           {pIndex + 1}
         </TableCell>
-        <TableCell align="left" width="25%">
-          {program_ismi}
+        <TableCell align="left" width="15%">
+          {program}
         </TableCell>
-        <TableCell align="left" width="10%">
-          {baslama_tarihi}
+        <TableCell
+          align="left"
+          width="8%"
+          sx={{ color: "success.main", fontWeight: 500 }}
+        >
+          {dateFormat(baslamaTarihi)}
         </TableCell>
         <TableCell align="left" width="5%">
           {sure}
         </TableCell>
-        <TableCell align="left" width="10%">
-          {tamamlanma_tarihi}
+        <TableCell align="left" width="7%">
+          {dateFormat(tamamlanmaTarihi)}
         </TableCell>
-        <TableCell align="left" width="10%">
-          {takip_tarihi}
+        <TableCell align="left" width="7%">
+          {dateFormat(takipTarihi)}
         </TableCell>
         <TableCell align="left" width="10%">
           {durum}
@@ -84,13 +124,30 @@ const HomeTableRow = ({ data, pIndex }) => {
             <DeleteIcon />
           </IconButton>
           <ModalIconButton
-            height={{ md: "25vh" }}
+            height={{ md: "35vh" }}
             modalOpen={openEditProjeModal}
             setModalOpen={setOpenEditProjeModal}
-            title="Proje Güncelle"
+            title={program}
             color="primary"
           >
-            <ProjeForm />
+            <ProjeForm
+              submitHandler={projeEditSubmitHandler}
+              sektorData={sektorData}
+              updateForm={1}
+              initialData={{
+                id,
+                isletmeId,
+                baslamaTarihi,
+                tamamlanmaTarihi,
+                takipTarihi,
+                notlar,
+                sure,
+                program,
+                izleyici,
+                durum,
+                odemeler,
+              }}
+            />
           </ModalIconButton>
         </TableCell>
       </TableRow>
@@ -103,7 +160,7 @@ const HomeTableRow = ({ data, pIndex }) => {
                   <TableBody>
                     {odemeler.map(
                       (
-                        { destek_ismi, karekod, tarih, tutar, durum },
+                        { id, projeId, karekod, tarih, tutar, destek, durum },
                         index
                       ) => (
                         <TableRow
@@ -116,15 +173,30 @@ const HomeTableRow = ({ data, pIndex }) => {
                             {index + 1}
                           </TableCell>
                           <TableCell component="th" scope="row" width="20%">
-                            {destek_ismi}
+                            {destek}
                           </TableCell>
                           <TableCell width="5%">{karekod}</TableCell>
-                          <TableCell width="10%">{tarih}</TableCell>
+                          <TableCell width="10%">{dateFormat(tarih)}</TableCell>
                           <TableCell
                             sx={{ color: "primary.main", fontWeight: 500 }}
                             width="10%"
                           >{`${tutar.toFixed(2)} TL`}</TableCell>
-                          <TableCell width="10%">{durum}</TableCell>
+                          {durum == "ÖDENDİ" && (
+                            <TableCell
+                              width="10%"
+                              sx={{ color: "success.main", fontWeight: 500 }}
+                            >
+                              {durum}
+                            </TableCell>
+                          )}
+                          {durum == "BEKLEMEDE" && (
+                            <TableCell
+                              width="10%"
+                              sx={{ color: "error.main", fontWeight: 500 }}
+                            >
+                              {durum}
+                            </TableCell>
+                          )}
                           <TableCell align="left" width="10%">
                             <IconButton
                               size="small"
@@ -134,13 +206,26 @@ const HomeTableRow = ({ data, pIndex }) => {
                               <DeleteIcon />
                             </IconButton>
                             <ModalIconButton
-                              height={{ md: "25vh" }}
+                              height={{ md: "30vh" }}
                               modalOpen={openEditOdemeModal}
                               setModalOpen={setOpenEditOdemeModal}
                               title="Ödeme Güncelle"
                               color="primary"
                             >
-                              <OdemeForm />
+                              <OdemeForm
+                                submitHandler={odemeEditSubmitHandler}
+                                destekData={destekData}
+                                updateForm={1}
+                                initialData={{
+                                  id,
+                                  projeId,
+                                  karekod,
+                                  tarih,
+                                  tutar,
+                                  destek,
+                                  durum,
+                                }}
+                              />
                             </ModalIconButton>
                           </TableCell>
                         </TableRow>

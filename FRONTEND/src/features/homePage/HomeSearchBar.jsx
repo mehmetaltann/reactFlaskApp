@@ -4,7 +4,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import ModalButton from "../../components/modal/ModalButton";
 import IsletmeForm from "../../components/forms/IsletmeForm";
 import { WorkContext } from "../../store/AppContext";
-import { isletmeData  } from "../../utils/isletmeData";
+import { isletmeData } from "../../utils/isletmeData";
 import { sektorData } from "../../utils/sektorData";
 import { Card, TextField, Typography, Box, Stack } from "@mui/material";
 
@@ -46,22 +46,23 @@ const HomeSearchBar = () => {
     }));
   };
 
-  const submitHandler = (values) => {
-    const newRecord = {
+  const isletmeAddSubmitHandler = (values) => {
+    let isletmeId = "id" + Math.random().toString(20).slice(2);
+    const addIsletmeRecord = {
+      id: isletmeId,
       unvan: values.unvan,
-      sistem_id: values.sistem_id,
-      sektor_ismi: values.sektor_ismi,
+      vergiNo: values.vergiNo,
+      sistemId: values.sistemId,
+      naceKodu: values.naceKodu,
       yetkili: values.yetkili,
       notlar: values.notlar,
       adres: values.adres,
       tel1: values.tel1,
       tel2: values.tel2,
-      projeler: [],
       uets: values.uets,
       mail: values.mail,
+      projeler: [],
     };
-
-    console.log(newRecord);
 
     setOpenAddIsletmeModal(false);
   };
@@ -69,7 +70,7 @@ const HomeSearchBar = () => {
   return (
     <Card>
       <Stack
-        sx={{ p: 1, m: 1 }}
+        sx={{ p: 1 }}
         alignItems={{ md: "center" }}
         justifyContent={"space-between"}
         direction={{ md: "row" }}
@@ -133,7 +134,7 @@ const HomeSearchBar = () => {
           </Grid>
         </Grid>
 
-        <Box sx={{ pr: { md: 6 }, pt: { xs: 2, md: 0 } }}>
+        <Box sx={{ pr: { md: 9 }, pt: { xs: 2, md: 0 } }}>
           <ModalButton
             title="İşletme Ekle"
             buttonTitle="Yeni İşletme Kayıt"
@@ -145,19 +146,18 @@ const HomeSearchBar = () => {
             size="large"
           >
             <IsletmeForm
-              submitHandler={submitHandler}
+              submitHandler={isletmeAddSubmitHandler}
               sektorData={sektorData}
               initialData={{
                 unvan: "",
-                vergi: "",
-                sistem_id: "",
-                sektor_ismi: "",
+                vergiNo: "",
+                sistemId: "",
+                naceKodu: "",
                 yetkili: "",
                 notlar: "",
                 adres: "",
                 tel1: "",
                 tel2: "",
-                projeler: [],
                 uets: "",
                 mail: "",
               }}
