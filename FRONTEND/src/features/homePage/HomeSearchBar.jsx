@@ -17,22 +17,22 @@ const HomeSearchBar = () => {
   const [isletme, setIsletme] = useContext(WorkContext);
   const [openAddIsletmeModal, setOpenAddIsletmeModal] = useState(false);
 
-  const findByVal = (sData, aData) => {
-    const { unvan, vergiNo, firmaId } = sData;
+  const findByVal = (searchData, allData) => {
+    const { unvan, vergiNo, firmaId } = searchData;
     if (unvan !== "") {
-      let filterData = aData.filter((obj) => obj["unvan"].includes(unvan));
+      let filterData = allData.filter((obj) => obj["unvan"].includes(unvan));
       return filterData[0];
     } else if (vergiNo !== "") {
-      return aData.find((obj) => obj.vergi == vergiNo);
+      return allData.find((obj) => obj.vergiNo === vergiNo);
     } else if (firmaId !== "") {
-      return aData.find((obj) => obj.id == firmaId);
+      return allData.find((obj) => obj.id.toString() === firmaId);
     }
   };
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const iData = findByVal(searchData, isletmeData);
-      setIsletme(iData);
+      const findedIsletme = findByVal(searchData, isletmeData);
+      setIsletme(findedIsletme);
     }, 1000);
 
     return () => clearTimeout(timeoutId);
@@ -63,7 +63,7 @@ const HomeSearchBar = () => {
       mail: values.mail,
       projeler: [],
     };
-
+    console.log(addIsletmeRecord);
     setOpenAddIsletmeModal(false);
   };
 
@@ -138,7 +138,7 @@ const HomeSearchBar = () => {
           <ModalButton
             title="İşletme Ekle"
             buttonTitle="Yeni İşletme Kayıt"
-            height="65vh"
+            height="70vh"
             width="130%"
             variant="contained"
             modalOpen={openAddIsletmeModal}
