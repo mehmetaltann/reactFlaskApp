@@ -14,10 +14,10 @@ import {
 } from "@mui/material";
 
 const pages = [
-  { title: "Anasayfa", link: "" },
-  { title: "Projeler", link: "projeler" },
-  { title: "Ödemeler", link: "odemeler" },
-  { title: "İşletmeler", link: "isletmeler" },
+  { title: "ANASAYFA", link: "" },
+  { title: "PROJELER", link: "projeler" },
+  { title: "ÖDEMELER", link: "odemeler" },
+  { title: "İŞLETMELER", link: "isletmeler" },
 ];
 
 const NavBar = () => {

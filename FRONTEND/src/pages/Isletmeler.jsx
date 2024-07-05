@@ -1,10 +1,12 @@
-import React from 'react'
+import IslTableContainer from "../features/isletmelerPage/IslTableContainer";
 import { PageWrapper } from "../layouts/Wrappers";
 
 const Isletmeler = () => {
   return (
-    <PageWrapper>Isletmeler</PageWrapper>
-  )
-}
+    <PageWrapper>
+      <IslTableContainer />
+    </PageWrapper>
+  );
+};
 
-export default Isletmeler
+export default Isletmeler;

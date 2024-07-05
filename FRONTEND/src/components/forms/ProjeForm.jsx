@@ -12,19 +12,6 @@ const ProjeForm = ({
   submitHandler,
   updateForm = 0,
 }) => {
-  /*
-  
-  const validateSchema = Yup.object().shape({
-    unvan: Yup.string().required("Gerekli").min(2, "En az 5 Karakter"),
-    sistem_id: Yup.string().required("Boş Olamaz"),
-    vergi: Yup.string().required("Boş Olamaz"),
-    sektor_ismi: Yup.string().required("Boş Olamaz"),
-    adres: Yup.string().required("Boş Olamaz"),
-    mail: Yup.string().required("Boş Olamaz"),
-  });
-
-*/
-
   return (
     <Formik initialValues={initialData} onSubmit={submitHandler}>
       {({ values }) => (
@@ -74,6 +61,19 @@ const ProjeForm = ({
                 size="small"
               />
             </Stack>
+            {updateForm == 1 && (
+              <Field name="durum" component={FormSelect} label="Durum">
+                <MenuItem value="Devam Ediyor">Devam Ediyor</MenuItem>
+                <MenuItem value="Başarıyla Tamamlandı">
+                  Başarıyla Tamamlandı
+                </MenuItem>
+                <MenuItem value="Başarısız Tamamlandı">
+                  Başarısız Tamamlandı
+                </MenuItem>
+                <MenuItem value="Durduruldu">Durduruldu</MenuItem>
+                <MenuItem value="Bilgi Yok">Bilgi Yok</MenuItem>
+              </Field>
+            )}
             <Button
               type="submit"
               sx={{ width: "100%" }}

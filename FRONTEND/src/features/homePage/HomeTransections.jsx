@@ -1,5 +1,4 @@
-import { Fragment, useContext, useState } from "react";
-import { WorkContext } from "../../store/AppContext";
+import { Fragment, useState } from "react";
 import { sektorData } from "../../utils/sektorData";
 import { programData } from "../../utils/programData";
 import { destekData } from "../../utils/destekData";
@@ -10,8 +9,7 @@ import OdemeForm from "../../components/forms/OdemeForm";
 import ProjeForm from "../../components/forms/ProjeForm";
 import IsletmeForm from "../../components/forms/IsletmeForm";
 
-const HomeTransections = () => {
-  const [isletme] = useContext(WorkContext);
+const HomeTransections = ({ isletme }) => {
   const [openUpdateIsletmeModal, setOpenUpdateIsletmeModal] = useState(false);
   const [openAddProjeModal, setOpenAddProjeModal] = useState(false);
   const [openAddOdemeModal, setOpenAddOdemeModal] = useState(false);
@@ -32,7 +30,6 @@ const HomeTransections = () => {
       mail: values.mail,
       projeler: values.projeler,
     };
-
     setOpenUpdateIsletmeModal(false);
   };
 
@@ -59,11 +56,11 @@ const HomeTransections = () => {
     let odemeId = "id" + Math.random().toString(16).slice(2);
     const addOdemeRecord = {
       id: odemeId,
-      projeId: values.proje_id,
-      karekod: values.tarih,
+      projeId: values.projeId,
+      karekod: values.karekod,
       tarih: values.tarih,
       tutar: values.tutar,
-      destek: values.destek_isim,
+      destek: values.destek,
       durum: "Beklemede",
     };
 
@@ -75,7 +72,7 @@ const HomeTransections = () => {
       {isletme && (
         <Card sx={{ mt: 1, p: 1 }}>
           <Stack
-            direction={{ lg: "row" }}
+            direction={{ sm: "row" }}
             justifyContent={"space-around"}
             alignItems={"center"}
           >
@@ -87,10 +84,11 @@ const HomeTransections = () => {
               color="primary"
               height="65vh"
               width="80vh"
-              maxW="80vh"
-              minW="45vh"
-              size="large"
+              maxW="33%"
+              minW="33%"
+              size="medium"
               maxh="4vh"
+              endIconLogo="editnote"
             >
               <IsletmeForm
                 submitHandler={isletmeUpdatesubmitHandler}
@@ -98,17 +96,17 @@ const HomeTransections = () => {
                 initialData={{
                   id: isletme.id,
                   unvan: isletme.unvan,
-                  vergiNo: isletme.vergi,
-                  sistemId: isletme.id,
-                  naceKodu: isletme.sektor_ismi,
+                  vergiNo: isletme.vergiNo,
+                  sistemId: isletme.sistemId,
+                  naceKodu: isletme.naceKodu,
                   yetkili: isletme.yetkili,
-                  notlar: isletme.notlar,
+                  notlar: isletme.notlar ?? "",
                   adres: isletme.adres,
-                  tel1: isletme.tel1,
-                  tel2: isletme.tel2,
-                  uets: isletme.uets,
-                  mail: isletme.mail,
-                  projeler: isletme.projeler,
+                  tel1: isletme.tel1 ?? "",
+                  tel2: isletme.tel2 ?? "",
+                  uets: isletme.uets ?? "",
+                  mail: isletme.mail ?? "",
+                  projeler: isletme.projeler ?? "",
                 }}
               />
             </ModalButton>
@@ -119,11 +117,12 @@ const HomeTransections = () => {
               height="40vh"
               modalOpen={openAddProjeModal}
               setModalOpen={setOpenAddProjeModal}
-              size="normal"
+              size="medium"
               width="120%"
-              maxW="80vh"
-              minW="45vh"
+              maxW="33%"
+              minW="33%"
               maxh="4vh"
+              endIconLogo="project"
             >
               <ProjeForm
                 submitHandler={projeAddSubmitHandler}
@@ -143,12 +142,13 @@ const HomeTransections = () => {
               title="Ödeme Ekle"
               buttonTitle="Ödeme Ekle"
               height="35vh"
-              maxW="80vh"
-              minW="45vh"
+              maxW="33%"
+              minW="33%"
               maxh="4vh"
               modalOpen={openAddOdemeModal}
               setModalOpen={setOpenAddOdemeModal}
-              size="large"
+              size="medium"
+              endIconLogo="payment"
             >
               <OdemeForm
                 submitHandler={odemeAddSubmitHandler}
@@ -159,7 +159,7 @@ const HomeTransections = () => {
                   karekod: "",
                   destek: "",
                   tarih: todayDateInput,
-                  tutar: "",
+                  tutar: 0,
                 }}
               />
             </ModalButton>

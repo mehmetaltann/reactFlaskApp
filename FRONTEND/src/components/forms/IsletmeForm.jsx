@@ -8,9 +8,9 @@ import { Stack, MenuItem, Button } from "@mui/material";
 export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
   const validateSchema = Yup.object().shape({
     unvan: Yup.string().required("Gerekli").min(2, "En az 5 Karakter"),
-    sistem_id: Yup.string().required("Boş Olamaz"),
-    vergi: Yup.string().required("Boş Olamaz"),
-    sektor_ismi: Yup.string().required("Boş Olamaz"),
+    sistemId: Yup.string().required("Boş Olamaz"),
+    vergiNo: Yup.string().required("Boş Olamaz"),
+    naceKodu: Yup.string().required("Boş Olamaz"),
     adres: Yup.string().required("Boş Olamaz"),
     mail: Yup.string().required("Boş Olamaz"),
   });
@@ -30,7 +30,7 @@ export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
               label="Firma İsmi"
               size="small"
             />
-            <Stack direction={"row"}>
+            <Stack direction={"row"} spacing={1}>
               <FormTextField
                 sx={{ width: "100%" }}
                 name="vergiNo"
@@ -44,7 +44,6 @@ export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
                 size="small"
               />
             </Stack>
-
             <Field name="naceKodu" component={FormSelect} label="Sektör">
               {sektorData?.map(({ isim }, index) => (
                 <MenuItem value={isim} key={index}>
@@ -52,7 +51,7 @@ export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
                 </MenuItem>
               ))}
             </Field>
-            <Stack direction={"row"}>
+            <Stack direction={"row"} spacing={1}>
               <FormTextField
                 sx={{ width: "100%" }}
                 name="mail"
@@ -67,7 +66,7 @@ export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
               />
             </Stack>
 
-            <Stack direction={"row"}>
+            <Stack direction={"row"} spacing={1}>
               <FormTextField
                 sx={{ width: "100%" }}
                 name="tel1"
@@ -104,7 +103,7 @@ export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
               type="submit"
               sx={{ width: "100%" }}
               variant="contained"
-              color="secondary"
+              color="primary"
               endIcon={<SendIcon />}
             >
               Ekle

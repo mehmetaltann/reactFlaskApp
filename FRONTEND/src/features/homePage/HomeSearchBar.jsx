@@ -1,42 +1,13 @@
-import { useState, useEffect, useContext } from "react";
+import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import Grid from "@mui/material/Unstable_Grid2";
 import ModalButton from "../../components/modal/ModalButton";
 import IsletmeForm from "../../components/forms/IsletmeForm";
-import { WorkContext } from "../../store/AppContext";
-import { isletmeData } from "../../utils/isletmeData";
 import { sektorData } from "../../utils/sektorData";
 import { Card, TextField, Typography, Box, Stack } from "@mui/material";
 
-const HomeSearchBar = () => {
-  const [searchData, setSearchData] = useState({
-    unvan: "",
-    vergiNo: "",
-    firmaId: "",
-  });
-  const [isletme, setIsletme] = useContext(WorkContext);
+const HomeSearchBar = ({ searchData, setSearchData }) => {
   const [openAddIsletmeModal, setOpenAddIsletmeModal] = useState(false);
-
-  const findByVal = (searchData, allData) => {
-    const { unvan, vergiNo, firmaId } = searchData;
-    if (unvan !== "") {
-      let filterData = allData.filter((obj) => obj["unvan"].includes(unvan));
-      return filterData[0];
-    } else if (vergiNo !== "") {
-      return allData.find((obj) => obj.vergiNo === vergiNo);
-    } else if (firmaId !== "") {
-      return allData.find((obj) => obj.id.toString() === firmaId);
-    }
-  };
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const findedIsletme = findByVal(searchData, isletmeData);
-      setIsletme(findedIsletme);
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchData]);
 
   const handleInputsChange = (e) => {
     const { name, value } = e.target;
@@ -63,7 +34,7 @@ const HomeSearchBar = () => {
       mail: values.mail,
       projeler: [],
     };
-    console.log(addIsletmeRecord);
+
     setOpenAddIsletmeModal(false);
   };
 
@@ -82,14 +53,13 @@ const HomeSearchBar = () => {
           alignItems={"center"}
           justifyContent={"flex-start"}
         >
-          <Grid item="true" sx={{ pr: 8 }}>
+          <Grid item="true" sx={{ xs: { pr: 1 }, md: { pr: 4 } }}>
             <Stack
               direction="row"
               alignItems={"center"}
               justifyContent={"center"}
-              spacing={1}
             >
-              <SearchIcon sx={{ color: "primary.main" }} fontSize="large" />
+              <SearchIcon sx={{ color: "primary.main" }} />
               <Typography sx={{ color: "primary.main" }} variant="h6">
                 İşletme Ara
               </Typography>
@@ -144,6 +114,7 @@ const HomeSearchBar = () => {
             modalOpen={openAddIsletmeModal}
             setModalOpen={setOpenAddIsletmeModal}
             size="large"
+            endIconLogo="addnew"
           >
             <IsletmeForm
               submitHandler={isletmeAddSubmitHandler}

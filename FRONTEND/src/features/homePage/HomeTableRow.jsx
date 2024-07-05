@@ -13,13 +13,12 @@ import {
   IconButton,
   TableBody,
   Box,
-  TableHead,
   TableRow,
   TableCell,
   Collapse,
 } from "@mui/material";
 
-const HomeTableRow = ({ data, pIndex }) => {
+const HomeTableRow = ({ data, index }) => {
   const {
     id,
     isletmeId,
@@ -34,7 +33,7 @@ const HomeTableRow = ({ data, pIndex }) => {
     odemeler,
   } = data;
 
-  const [open, setOpen] = useState(false);
+  const [openArrow, setOpenArrow] = useState(false);
   const [openEditProjeModal, setOpenEditProjeModal] = useState(false);
   const [openEditOdemeModal, setOpenEditOdemeModal] = useState(false);
 
@@ -56,7 +55,7 @@ const HomeTableRow = ({ data, pIndex }) => {
       durum: values.durum,
       odemeler: values.odemeler,
     };
-
+    console.log(editProjeRecord);
     setOpenEditProjeModal(false);
   };
 
@@ -81,14 +80,14 @@ const HomeTableRow = ({ data, pIndex }) => {
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpen(!open)}
+            onClick={() => setOpenArrow(!openArrow)}
             color="primary"
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            {openArrow ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row" width="1%">
-          {pIndex + 1}
+          {index + 1}
         </TableCell>
         <TableCell align="left" width="15%">
           {program}
@@ -120,15 +119,14 @@ const HomeTableRow = ({ data, pIndex }) => {
           {`${totalPayment} TL`}
         </TableCell>
         <TableCell align="left" width="10%">
-          <IconButton size="small" color="primary" onClick={{}}>
+          <IconButton size="small" color="primary">
             <DeleteIcon />
           </IconButton>
           <ModalIconButton
-            height={{ md: "35vh" }}
+            height={{ md: "45vh" }}
             modalOpen={openEditProjeModal}
             setModalOpen={setOpenEditProjeModal}
             title={program}
-            color="primary"
           >
             <ProjeForm
               submitHandler={projeEditSubmitHandler}
@@ -154,7 +152,7 @@ const HomeTableRow = ({ data, pIndex }) => {
       {odemeler && (
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
+            <Collapse in={openArrow} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }}>
                 <Table size="small" aria-label="odemeler">
                   <TableBody>
@@ -198,11 +196,7 @@ const HomeTableRow = ({ data, pIndex }) => {
                             </TableCell>
                           )}
                           <TableCell align="left" width="10%">
-                            <IconButton
-                              size="small"
-                              color="primary"
-                              onClick={{}}
-                            >
+                            <IconButton size="small" color="primary">
                               <DeleteIcon />
                             </IconButton>
                             <ModalIconButton

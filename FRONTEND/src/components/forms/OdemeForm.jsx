@@ -14,26 +14,17 @@ const ProjeForm = ({
   isletme,
   updateForm = 0,
 }) => {
-  /*
-  
   const validateSchema = Yup.object().shape({
-    unvan: Yup.string().required("Gerekli").min(2, "En az 5 Karakter"),
-    sistem_id: Yup.string().required("Boş Olamaz"),
-    vergi: Yup.string().required("Boş Olamaz"),
-    sektor_ismi: Yup.string().required("Boş Olamaz"),
-    adres: Yup.string().required("Boş Olamaz"),
-    mail: Yup.string().required("Boş Olamaz"),
+    karekod: Yup.string().required("Boş Olamaz"),
+    tutar: Yup.number().required("Boş Olamaz"),
   });
 
-*/
-  let deneme = destekData.filter(
-    (item) => item.isim === initialData.destek_isim
-  );
-
-  console.log(initialData.destek_isim);
-
   return (
-    <Formik initialValues={initialData} onSubmit={submitHandler}>
+    <Formik
+      initialValues={initialData}
+      onSubmit={submitHandler}
+      validationSchema={validateSchema}
+    >
       {({ values }) => (
         <Form>
           <Stack spacing={2} sx={{ pl: 1 }}>
@@ -74,6 +65,7 @@ const ProjeForm = ({
                 name="tutar"
                 label="Tutar"
                 size="small"
+                type="number"
               />
             </Stack>
             {updateForm == 1 && (

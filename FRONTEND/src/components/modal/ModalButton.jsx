@@ -1,5 +1,8 @@
 import SendIcon from "@mui/icons-material/Send";
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
+import PaymentsIcon from "@mui/icons-material/Payments";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import AddToQueueIcon from "@mui/icons-material/AddToQueue";
 import { Button, Modal, Box, Typography, Divider } from "@mui/material";
 import { Fragment } from "react";
 
@@ -40,8 +43,24 @@ const ModalButton = ({
         size={size}
         variant={variant}
         startIcon={icon}
-        endIcon={endIconLogo === "send" ? <SendIcon /> : <PlaylistAddIcon />}
-        sx={{ minWidth: minW, maxWidth: maxW, maxHeight: maxh }}
+        endIcon={
+          endIconLogo === "editnote" ? (
+            <EditNoteIcon />
+          ) : endIconLogo === "payment" ? (
+            <PaymentsIcon />
+          ) : endIconLogo === "project" ? (
+            <AccountTreeIcon />
+          ) : endIconLogo === "addnew" ? (
+            <AddToQueueIcon />
+          ) : (
+            <SendIcon />
+          )
+        }
+        sx={{
+          minWidth: minW,
+          maxWidth: maxW,
+          maxHeight: maxh,
+        }}
         onClick={() => setModalOpen(true)}
       >
         {buttonTitle}

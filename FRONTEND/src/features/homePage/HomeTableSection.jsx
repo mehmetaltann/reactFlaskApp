@@ -1,7 +1,6 @@
 import HomeTableRow from "./HomeTableRow";
-import { Fragment, useContext, useState } from "react";
+import { Fragment } from "react";
 import { Card } from "@mui/material";
-import { WorkContext } from "../../store/AppContext";
 import {
   Table,
   TableBody,
@@ -10,22 +9,9 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TableSortLabel,
 } from "@mui/material";
 
-const HomeTableSection = () => {
-  const [isletme] = useContext(WorkContext);
-
-  /* TTablo sort işlemleri için*/
-  const [orderDirection, setOrderDirection] = useState("asc");
-  const [valueToOrderBy, setValueToOrderBy] = useState("");
-
-  const createSortHandler = (property) => (event) => {
-    const isAscending = valueToOrderBy === property && orderDirection === "asc";
-    setValueToOrderBy(property);
-    setOrderDirection(isAscending ? "desc" : "asc");
-  };
-
+const HomeTableSection = ({ isletme }) => {
   return (
     <Fragment>
       {isletme && isletme.projeler.length !== 0 && (
@@ -33,35 +19,15 @@ const HomeTableSection = () => {
           <TableContainer component={Paper}>
             <Table
               sx={{ minWidth: 650 }}
-              aria-label="simple table"
+              aria-label="project table"
               size="small"
             >
               <TableHead>
                 <TableRow>
                   <TableCell align="left"></TableCell>
                   <TableCell align="left">#</TableCell>
-                  <TableCell align="left" key="name">
-                    <TableSortLabel
-                      active={valueToOrderBy === "name"}
-                      direction={
-                        valueToOrderBy === "name" ? orderDirection : "asc"
-                      }
-                      onClick={createSortHandler("name")}
-                    >
-                      İsim
-                    </TableSortLabel>
-                  </TableCell>
-                  <TableCell align="left" key="size">
-                    <TableSortLabel
-                      active={valueToOrderBy === "size"}
-                      direction={
-                        valueToOrderBy === "size" ? orderDirection : "asc"
-                      }
-                      onClick={createSortHandler("size")}
-                    >
-                      Başlama Tarihi
-                    </TableSortLabel>
-                  </TableCell>
+                  <TableCell align="left">Proje</TableCell>
+                  <TableCell align="left">Başlama Tarihi</TableCell>
                   <TableCell align="left">Süre</TableCell>
                   <TableCell align="left">Bitiş Tarihi</TableCell>
                   <TableCell align="left">Takip Tarihi</TableCell>
@@ -72,7 +38,7 @@ const HomeTableSection = () => {
               </TableHead>
               <TableBody>
                 {isletme.projeler.toReversed().map((item, index) => (
-                  <HomeTableRow data={item} key={index} pIndex={index} />
+                  <HomeTableRow data={item} key={index} index={index} />
                 ))}
               </TableBody>
             </Table>

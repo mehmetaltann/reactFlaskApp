@@ -6,17 +6,18 @@ const ModalIconButton = ({
   children,
   title,
   height = { md: "70vh", xs: "80vh" },
-  color = "secondary",
+  color = "primary",
   variant = "outlined",
   modalOpen,
   setModalOpen,
+  size = "small",
 }) => {
   const modalStyle = {
     position: "absolute",
     top: "40%",
     left: "50%",
     height: height,
-    width: { md: "40%", sm: "55%", xs: "85%", lg: "30%" },
+    width: { sm: "55%", xs: "85%", lg: "30%" },
     overflow: "auto",
     transform: "translate(-50%, -50%)",
     bgcolor: "background.paper",
@@ -28,7 +29,7 @@ const ModalIconButton = ({
   return (
     <Fragment>
       <IconButton
-        size="small"
+        size={size}
         variant={variant}
         color={color}
         onClick={() => setModalOpen(true)}

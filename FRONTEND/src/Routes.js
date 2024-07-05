@@ -1,7 +1,7 @@
 import Home from "./pages/Home";
 import Isletmeler from "./pages/Isletmeler";
-import Odemeler from "./pages/Home";
-import Projeler from "./pages/Isletmeler";
+import Odemeler from "./pages/Odemeler";
+import Projeler from "./pages/Projeler";
 import NavBar from "./layouts/NavBar";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 
