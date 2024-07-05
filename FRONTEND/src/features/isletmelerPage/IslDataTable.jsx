@@ -8,10 +8,6 @@ import { stringColumn, actionColumn } from "../../components/tables/columns";
 const IslDataTable = () => {
   const [isletmeler, setIsletmeler] = useState(isletmeData);
 
-  /*  const totalPayment = odemeler
-    .reduce((n, { tutar }) => n + tutar, 0)
-    .toFixed(2);*/
-
   const getRowSpacing = useCallback((params) => {
     return {
       top: params.isFirstVisible ? 0 : 2,
@@ -50,7 +46,6 @@ const IslDataTable = () => {
       disableColumnResize
       disableDensitySelector
       disableColumnFilter
-      
     />
   );
 };
