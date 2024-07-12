@@ -3,16 +3,16 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { trTR } from "@mui/x-data-grid/locales";
 
 const DataTableFrame = (props) => {
-  const { columns, rows, sxProps, slotsProps, slotSPropProps, ...rest } = props;
+  const { columns, data, sxProps, slotsProps, slotSPropProps, ...rest } = props;
 
   return (
     <DataGrid
       columns={columns}
-      rows={rows}
+      rows={data}
       localeText={trTR.components.MuiDataGrid.defaultProps.localeText}
       density="compact"
       initialState={{
-        ...rows?.initialState,
+        ...data?.initialState,
         pagination: { paginationModel: { pageSize: 30 } },
       }}
       pageSizeOptions={[30, 60, 90]}

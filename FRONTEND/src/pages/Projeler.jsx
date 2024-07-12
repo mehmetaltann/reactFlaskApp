@@ -1,10 +1,12 @@
-import React from 'react'
+import PrjTableContainer from "../features/projelerPage/PrjTableContainer";
 import { PageWrapper } from "../layouts/Wrappers";
 
 const Projeler = () => {
   return (
-    <PageWrapper>Projeler</PageWrapper>
-  )
-}
+    <PageWrapper>
+      <PrjTableContainer />
+    </PageWrapper>
+  );
+};
 
-export default Projeler
+export default Projeler;

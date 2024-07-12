@@ -2,7 +2,7 @@ import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState, useCallback } from "react";
 import { isletmeData } from "../../utils/isletmeData";
-import { IconButton, Stack, Typography } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { stringColumn, actionColumn } from "../../components/tables/columns";
 
 const IslDataTable = () => {
@@ -36,17 +36,19 @@ const IslDataTable = () => {
   ];
 
   return (
-    <DataTableFrame
-      getRowHeight={() => "auto"}
-      getEstimatedRowHeight={() => 200}
-      getRowSpacing={getRowSpacing}
-      density="standard"
-      columns={columns}
-      rows={isletmeler}
-      disableColumnResize
-      disableDensitySelector
-      disableColumnFilter
-    />
+    <div style={{ height: "100%", width: "100%" }}>
+      <DataTableFrame
+        getRowHeight={() => "auto"}
+        getEstimatedRowHeight={() => 200}
+        getRowSpacing={getRowSpacing}
+        density="standard"
+        columns={columns}
+        data={isletmeler}
+        disableColumnResize
+        disableDensitySelector
+        disableColumnFilter
+      />
+    </div>
   );
 };
 
