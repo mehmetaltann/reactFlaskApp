@@ -3,9 +3,11 @@ import HomeSearchBar from "../features/homePage/HomeSearchBar";
 import HomeInfoSection from "../features/homePage/HomeInfoSection";
 import HomeTableSection from "../features/homePage/HomeTableSection";
 import HomeTransections from "../features/homePage/HomeTransections";
-import { isletmeData } from "../utils/isletmeData"; /* backend den gelecek data */
+import useAxios from "../hooks/useAxios";
+import axios from "../apis/isletmeDb";
 import { PageWrapper } from "../layouts/Wrappers";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
+import { Typography } from "@mui/material";
 
 const Home = () => {
   const [searchData, setSearchData] = useState({
@@ -14,28 +16,33 @@ const Home = () => {
     firmaId: "",
   });
 
-  const [isletme, setIsletme] = useState();
+  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+
+  const fetchData = (aramatext, aramatype) => {
+    const urlText = "/isletmeara/by" + aramatype + "/" + aramatext;
+    axiosFetch({
+      axiosInstance: axios,
+      method: "GET",
+      url: urlText,
+    });
+  };
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const findedIsletme = findByVal(searchData, isletmeData);
-      setIsletme(findedIsletme);
-    }, 1000);
+      const { unvan, vergiNo, firmaId } = searchData;
+      if (unvan !== "") {
+        fetchData(unvan, "unvan");
+      } else if (vergiNo !== "") {
+        fetchData(vergiNo, "vergino");
+      } else if (firmaId !== "") {
+        fetchData(firmaId, "id");
+      } else {
+        setResponse([]);
+      }
+    }, 600);
 
     return () => clearTimeout(timeoutId);
   }, [searchData]);
-
-  const findByVal = (searchData, allData) => {
-    const { unvan, vergiNo, firmaId } = searchData;
-    if (unvan !== "") {
-      let filterData = allData.filter((obj) => obj["unvan"].includes(unvan));
-      return filterData[0];
-    } else if (vergiNo !== "") {
-      return allData.find((obj) => obj.vergiNo === vergiNo);
-    } else if (firmaId !== "") {
-      return allData.find((obj) => obj.id.toString() === firmaId);
-    }
-  };
 
   return (
     <PageWrapper>
@@ -46,18 +53,31 @@ const Home = () => {
             setSearchData={setSearchData}
           />
         </Grid>
-        <Grid xs={12}>
-          <HomeInfoSection isletme={isletme} />
-        </Grid>
-        <Grid xs={12}>
-          <HomeTransections isletme={isletme} />
-        </Grid>
-        <Grid xs={12}>
-          <HomeTableSection isletme={isletme} />
-        </Grid>
+        {response.length !== 0 && (
+          <Fragment>
+            <Grid xs={12}>
+              <HomeInfoSection isletme={response} />
+            </Grid>
+            <Grid xs={12}>
+              <HomeTransections
+                isletme={response}
+                setSearchData={setSearchData}
+              />
+            </Grid>
+            <Grid xs={12}>
+              <HomeTableSection isletme={response} />
+            </Grid>
+          </Fragment>
+        )}
       </Grid>
     </PageWrapper>
   );
 };
 
 export default Home;
+
+/*  
+
+
+
+*/

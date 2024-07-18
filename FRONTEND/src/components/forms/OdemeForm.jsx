@@ -6,6 +6,7 @@ import FormSelect from "./ui/FormSelect";
 import { Form, Formik, Field } from "formik";
 import { Stack, MenuItem, Button } from "@mui/material";
 import { Fragment } from "react";
+import { dateFormat } from "../../utils/time-functions";
 
 const ProjeForm = ({
   destekData,
@@ -31,11 +32,13 @@ const ProjeForm = ({
             {updateForm == 0 && (
               <Fragment>
                 <Field name="projeId" component={FormSelect} label="Program">
-                  {isletme.projeler?.map(({ program, id }, index) => (
-                    <MenuItem value={id} key={index}>
-                      {program}
-                    </MenuItem>
-                  ))}
+                  {isletme.projeler?.map(
+                    ({ program, baslamaTarihi, id }, index) => (
+                      <MenuItem value={id} key={index}>
+                        {program} - {dateFormat(baslamaTarihi)}
+                      </MenuItem>
+                    )
+                  )}
                 </Field>
                 <Field name="destek" component={FormSelect} label="Destek">
                   {destekData?.map(({ isim }, index) => (

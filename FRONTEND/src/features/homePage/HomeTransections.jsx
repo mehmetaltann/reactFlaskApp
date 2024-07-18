@@ -4,15 +4,40 @@ import { programData } from "../../utils/programData";
 import { destekData } from "../../utils/destekData";
 import { todayDateInput } from "../../utils/time-functions";
 import { Card, Stack } from "@mui/material";
+import useAxios from "../../hooks/useAxios";
+import axios from "../../apis/isletmeDb";
 import ModalButton from "../../components/modal/ModalButton";
 import OdemeForm from "../../components/forms/OdemeForm";
 import ProjeForm from "../../components/forms/ProjeForm";
 import IsletmeForm from "../../components/forms/IsletmeForm";
 
-const HomeTransections = ({ isletme }) => {
+const HomeTransections = ({ isletme, setSearchData }) => {
   const [openUpdateIsletmeModal, setOpenUpdateIsletmeModal] = useState(false);
   const [openAddProjeModal, setOpenAddProjeModal] = useState(false);
   const [openAddOdemeModal, setOpenAddOdemeModal] = useState(false);
+  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+
+  const addProje = (postData) => {
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: "/projeekle",
+      requestConfig: {
+        data: postData,
+      },
+    });
+  };
+
+  const addOdeme = (postData) => {
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: "/odemeekle",
+      requestConfig: {
+        data: postData,
+      },
+    });
+  };
 
   const isletmeUpdatesubmitHandler = (values) => {
     const editIsletmeRecord = {
@@ -36,6 +61,7 @@ const HomeTransections = ({ isletme }) => {
   const projeAddSubmitHandler = (values) => {
     let projeId = "id" + Math.random().toString(16).slice(2);
     const addProjeRecord = {
+      _id: projeId,
       id: projeId,
       isletmeId: isletme.id,
       baslamaTarihi: values.baslamaTarihi,
@@ -48,23 +74,33 @@ const HomeTransections = ({ isletme }) => {
       durum: "Devam Ediyor",
       odemeler: [],
     };
-
+    addProje(addProjeRecord);
     setOpenAddProjeModal(false);
+    setSearchData((prevFormData) => ({
+      ...prevFormData,
+      id: values.isletmeId,
+    }));
   };
 
   const odemeAddSubmitHandler = (values) => {
     let odemeId = "id" + Math.random().toString(16).slice(2);
     const addOdemeRecord = {
+      _id: odemeId,
+      isletmeId: isletme.id,
       id: odemeId,
       projeId: values.projeId,
       karekod: values.karekod,
       tarih: values.tarih,
       tutar: values.tutar,
       destek: values.destek,
-      durum: "Beklemede",
+      durum: "BEKLEMEDE",
     };
-
+    addOdeme(addOdemeRecord);
     setOpenAddOdemeModal(false);
+    setSearchData((prevFormData) => ({
+      ...prevFormData,
+      id: values.isletmeId,
+    }));
   };
 
   return (

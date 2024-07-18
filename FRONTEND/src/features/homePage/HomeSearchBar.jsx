@@ -3,11 +3,14 @@ import SearchIcon from "@mui/icons-material/Search";
 import Grid from "@mui/material/Unstable_Grid2";
 import ModalButton from "../../components/modal/ModalButton";
 import IsletmeForm from "../../components/forms/IsletmeForm";
+import useAxios from "../../hooks/useAxios";
+import axios from "../../apis/isletmeDb";
 import { sektorData } from "../../utils/sektorData";
 import { Card, TextField, Typography, Box, Stack } from "@mui/material";
 
 const HomeSearchBar = ({ searchData, setSearchData }) => {
   const [openAddIsletmeModal, setOpenAddIsletmeModal] = useState(false);
+  const [response, error, loading, axiosFetch, setResponse] = useAxios();
 
   const handleInputsChange = (e) => {
     const { name, value } = e.target;
@@ -15,6 +18,17 @@ const HomeSearchBar = ({ searchData, setSearchData }) => {
       ...prevFormData,
       [name]: value.toUpperCase(),
     }));
+  };
+
+  const postData = (postData) => {
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: "/isletmeekle",
+      requestConfig: {
+        data: postData,
+      },
+    });
   };
 
   const isletmeAddSubmitHandler = (values) => {
@@ -34,8 +48,12 @@ const HomeSearchBar = ({ searchData, setSearchData }) => {
       mail: values.mail,
       projeler: [],
     };
-
+    postData(addIsletmeRecord);
     setOpenAddIsletmeModal(false);
+    setSearchData((prevFormData) => ({
+      ...prevFormData,
+      vergiNo: values.vergiNo,
+    }));
   };
 
   return (
