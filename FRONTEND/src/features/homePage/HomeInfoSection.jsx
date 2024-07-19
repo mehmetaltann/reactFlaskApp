@@ -21,7 +21,7 @@ const HomeInfoSection = ({ isletme }) => {
               <Grid item="true">
                 <Stack direction={{ md: "row" }} spacing={3}>
                   <InfoBox data={isletme.vergiNo} title={"Vergi No :"} />
-                  <InfoBox data={isletme.id} title={"Sistem ID :"} />
+                  <InfoBox data={isletme.sistemId} title={"Sistem ID :"} />
                   <InfoBox data={isletme.notlar} title={"Bilgi :"} />
                 </Stack>
               </Grid>

@@ -11,9 +11,10 @@ import {
   Paper,
 } from "@mui/material";
 
-const HomeTableSection = ({ isletme }) => {
+const HomeTableSection = ({ isletme, setSearchData }) => {
   return (
     <Fragment>
+     
       {isletme && isletme.projeler.length !== 0 && (
         <Card sx={{ p: 1, mt: 1 }}>
           <TableContainer component={Paper}>
@@ -38,7 +39,12 @@ const HomeTableSection = ({ isletme }) => {
               </TableHead>
               <TableBody>
                 {isletme.projeler.toReversed().map((item, index) => (
-                  <HomeTableRow data={item} key={index} index={index} />
+                  <HomeTableRow
+                    data={item}
+                    key={index}
+                    index={index}
+                    setSearchData={setSearchData}
+                  />
                 ))}
               </TableBody>
             </Table>

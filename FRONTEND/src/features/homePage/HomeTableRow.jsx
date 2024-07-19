@@ -4,9 +4,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ProjeForm from "../../components/forms/ProjeForm";
 import OdemeForm from "../../components/forms/OdemeForm";
 import ModalIconButton from "../../components/modal/ModelIconButton";
+import useAxios from "../../hooks/useAxios";
+import axios from "../../apis/isletmeDb";
+import { getChangedValues } from "../../utils/helper-functions";
 import { dateFormat } from "../../utils/time-functions";
-import { sektorData } from "../../utils/sektorData";
-import { destekData } from "../../utils/destekData";
 import { Fragment, useState } from "react";
 import {
   Table,
@@ -16,9 +17,37 @@ import {
   TableRow,
   TableCell,
   Collapse,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
-const HomeTableRow = ({ data, index }) => {
+function Item({ name }) {
+  if (name == "Devam Ediyor") {
+    return (
+      <TableCell width="10%" sx={{ color: "success.main", fontWeight: 500 }}>
+        {name}
+      </TableCell>
+    );
+  } else if (
+    name == "Durduruldu" ||
+    name == "Başarısız Tamamlandı" ||
+    name == "Bilgi Yok"
+  ) {
+    return (
+      <TableCell width="10%" sx={{ color: "error.main", fontWeight: 500 }}>
+        {name}
+      </TableCell>
+    );
+  } else if (name == "Başarıyla Tamamlandı") {
+    return (
+      <TableCell width="10%" sx={{ color: "info.main", fontWeight: 500 }}>
+        {name}
+      </TableCell>
+    );
+  }
+}
+
+const HomeTableRow = ({ data, index, setSearchData }) => {
   const {
     id,
     isletmeId,
@@ -36,45 +65,115 @@ const HomeTableRow = ({ data, index }) => {
   const [openArrow, setOpenArrow] = useState(false);
   const [openEditProjeModal, setOpenEditProjeModal] = useState(false);
   const [openEditOdemeModal, setOpenEditOdemeModal] = useState(false);
+  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const [openSnack, setOpenSnack] = useState(false);
 
   const totalPayment = odemeler
     .reduce((n, { tutar }) => n + tutar, 0)
     .toFixed(2);
 
+  const projeInitialValues = {
+    baslamaTarihi,
+    tamamlanmaTarihi,
+    takipTarihi,
+    notlar,
+    sure,
+    program,
+    izleyici,
+    durum,
+  };
+
+  const updateOdeme = (editOdemeRecord, odemeId) => {
+    const urlText = "/odemeguncelle/" + isletmeId + "/" + id + "/" + odemeId;
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: urlText,
+      requestConfig: {
+        data: editOdemeRecord,
+      },
+    });
+  };
+
+  const deleteOdeme = (isletmeId, projeId, odemeId) => {
+    const urlText = "/odemesil/" + isletmeId + "/" + projeId + "/" + odemeId;
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: urlText,
+    });
+  };
+
+  const updateProje = (editProjeRecord) => {
+    const urlText = "/projeguncelle/" + isletmeId + "/" + id;
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: urlText,
+      requestConfig: {
+        data: editProjeRecord,
+      },
+    });
+  };
+
+  const deleteProje = (isletmeId, projeId) => {
+    const urlText = "/projesil/" + isletmeId + "/" + projeId;
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: urlText,
+    });
+  };
+
   const projeEditSubmitHandler = (values) => {
-    const editProjeRecord = {
-      id: values.id,
-      isletmeId: values.isletmeId,
-      baslamaTarihi: values.baslamaTarihi,
-      tamamlanmaTarihi: values.tamamlanmaTarihi,
-      takipTarihi: values.takipTarihi,
-      notlar: values.notlar,
-      sure: values.sure,
-      program: values.program,
-      izleyici: values.izleyici,
-      durum: values.durum,
-      odemeler: values.odemeler,
-    };
-    console.log(editProjeRecord);
+    const editProjeRecord = getChangedValues(values, projeInitialValues);
+    updateProje(editProjeRecord);
     setOpenEditProjeModal(false);
+    setSearchData((prevFormData) => ({
+      ...prevFormData,
+      id: isletmeId,
+    }));
+    setOpenSnack(true);
   };
 
   const odemeEditSubmitHandler = (values) => {
     const editOdemeRecord = {
       id: values.id,
-      projeId: values.projeId,
-      karekod: values.karekod,
+      karekod: values.karekod.toUpperCase(),
       tarih: values.tarih,
       tutar: values.tutar,
-      destek: values.destek,
       durum: values.durum,
     };
-
+    updateOdeme(editOdemeRecord, values.id);
     setOpenEditOdemeModal(false);
+    setSearchData((prevFormData) => ({
+      ...prevFormData,
+      id: isletmeId,
+    }));
+    setOpenSnack(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSnack(false);
   };
 
   return (
     <Fragment>
+      <Snackbar open={openSnack} autoHideDuration={2000} onClose={handleClose}>
+        <Alert
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+          onClose={handleClose}
+        >
+          {response.message}
+        </Alert>
+      </Snackbar>
+
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell align="left" width="1%">
           <IconButton
@@ -108,9 +207,7 @@ const HomeTableRow = ({ data, index }) => {
         <TableCell align="left" width="7%">
           {dateFormat(takipTarihi)}
         </TableCell>
-        <TableCell align="left" width="10%">
-          {durum}
-        </TableCell>
+        <Item name={durum} />
         <TableCell
           align="left"
           width="10%"
@@ -119,9 +216,22 @@ const HomeTableRow = ({ data, index }) => {
           {`${totalPayment} TL`}
         </TableCell>
         <TableCell align="left" width="10%">
-          <IconButton size="small" color="primary">
-            <DeleteIcon />
-          </IconButton>
+          {odemeler.length == 0 && (
+            <IconButton
+              size="small"
+              color="primary"
+              onClick={() => {
+                deleteProje(isletmeId, id);
+                setSearchData((prevFormData) => ({
+                  ...prevFormData,
+                  id: isletmeId,
+                }));
+                setOpenSnack(true);
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          )}
           <ModalIconButton
             height={{ md: "45vh" }}
             modalOpen={openEditProjeModal}
@@ -130,21 +240,9 @@ const HomeTableRow = ({ data, index }) => {
           >
             <ProjeForm
               submitHandler={projeEditSubmitHandler}
-              sektorData={sektorData}
               updateForm={1}
-              initialData={{
-                id,
-                isletmeId,
-                baslamaTarihi,
-                tamamlanmaTarihi,
-                takipTarihi,
-                notlar,
-                sure,
-                program,
-                izleyici,
-                durum,
-                odemeler,
-              }}
+              initialData={projeInitialValues}
+              buttonName="GÜNCELLE"
             />
           </ModalIconButton>
         </TableCell>
@@ -158,11 +256,11 @@ const HomeTableRow = ({ data, index }) => {
                   <TableBody>
                     {odemeler.map(
                       (
-                        { id, projeId, karekod, tarih, tutar, destek, durum },
+                        { id, karekod, projeId, tarih, tutar, destek, durum },
                         index
                       ) => (
                         <TableRow
-                          key={index}
+                          key={id}
                           sx={{
                             "&:last-child td, &:last-child th": { border: 0 },
                           }}
@@ -196,7 +294,18 @@ const HomeTableRow = ({ data, index }) => {
                             </TableCell>
                           )}
                           <TableCell align="left" width="10%">
-                            <IconButton size="small" color="primary">
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => {
+                                deleteOdeme(isletmeId, projeId, id);
+                                setSearchData((prevFormData) => ({
+                                  ...prevFormData,
+                                  id: isletmeId,
+                                }));
+                                setOpenSnack(true);
+                              }}
+                            >
                               <DeleteIcon />
                             </IconButton>
                             <ModalIconButton
@@ -208,17 +317,15 @@ const HomeTableRow = ({ data, index }) => {
                             >
                               <OdemeForm
                                 submitHandler={odemeEditSubmitHandler}
-                                destekData={destekData}
                                 updateForm={1}
                                 initialData={{
                                   id,
-                                  projeId,
                                   karekod,
                                   tarih,
                                   tutar,
-                                  destek,
                                   durum,
                                 }}
+                                buttonName="GÜNCELLE"
                               />
                             </ModalIconButton>
                           </TableCell>

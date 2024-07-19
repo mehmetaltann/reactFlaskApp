@@ -3,23 +3,49 @@ import FormTextField from "./ui/FormTextField";
 import FormDatePicker from "./ui/FormDatePicker";
 import SendIcon from "@mui/icons-material/Send";
 import FormSelect from "./ui/FormSelect";
+import useAxios from "../../hooks/useAxios";
+import axios from "../../apis/isletmeDb";
 import { Form, Formik, Field } from "formik";
 import { Stack, MenuItem, Button } from "@mui/material";
+import { useEffect } from "react";
 
 const ProjeForm = ({
-  programData,
   initialData,
   submitHandler,
   updateForm = 0,
+  buttonName = "EKLE",
 }) => {
+  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+
+  useEffect(() => {
+    const fetchProgramData = () => {
+      axiosFetch({
+        axiosInstance: axios,
+        method: "GET",
+        url: "/programdata",
+      });
+    };
+
+    fetchProgramData();
+  }, []);
+
+  const validateSchema = Yup.object().shape({
+    sure: Yup.string().required("Boş Olamaz"),
+  });
+
   return (
-    <Formik initialValues={initialData} onSubmit={submitHandler}>
+    <Formik
+      initialValues={initialData}
+      onSubmit={submitHandler}
+      validationSchema={validateSchema}
+      validateOnChange={false}
+    >
       {({ values }) => (
         <Form>
           <Stack spacing={2} sx={{ pl: 1, pt: 1 }}>
-            {updateForm == 0 && (
+            {updateForm == 0 && !loading && (
               <Field name="program" component={FormSelect} label="Program">
-                {programData?.map(({ isim }, index) => (
+                {response?.map(({ isim }, index) => (
                   <MenuItem value={isim} key={index}>
                     {isim}
                   </MenuItem>
@@ -78,10 +104,10 @@ const ProjeForm = ({
               type="submit"
               sx={{ width: "100%" }}
               variant="contained"
-              color="secondary"
+              color="primary"
               endIcon={<SendIcon />}
             >
-              Ekle
+              {buttonName}
             </Button>
           </Stack>
         </Form>

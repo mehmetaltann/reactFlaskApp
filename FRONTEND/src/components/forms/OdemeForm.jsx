@@ -3,18 +3,35 @@ import FormTextField from "./ui/FormTextField";
 import FormDatePicker from "./ui/FormDatePicker";
 import SendIcon from "@mui/icons-material/Send";
 import FormSelect from "./ui/FormSelect";
+import useAxios from "../../hooks/useAxios";
+import axios from "../../apis/isletmeDb";
 import { Form, Formik, Field } from "formik";
 import { Stack, MenuItem, Button } from "@mui/material";
 import { Fragment } from "react";
 import { dateFormat } from "../../utils/time-functions";
+import { useEffect } from "react";
 
-const ProjeForm = ({
-  destekData,
+const OdemeForm = ({
   initialData,
   submitHandler,
   isletme,
   updateForm = 0,
+  buttonName = "EKLE",
 }) => {
+  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+
+  useEffect(() => {
+    const fetchDestekData = () => {
+      axiosFetch({
+        axiosInstance: axios,
+        method: "GET",
+        url: "/destekdata",
+      });
+    };
+
+    fetchDestekData();
+  }, []);
+
   const validateSchema = Yup.object().shape({
     karekod: Yup.string().required("Boş Olamaz"),
     tutar: Yup.number().required("Boş Olamaz"),
@@ -25,6 +42,7 @@ const ProjeForm = ({
       initialValues={initialData}
       onSubmit={submitHandler}
       validationSchema={validateSchema}
+      validateOnChange={false}
     >
       {({ values }) => (
         <Form>
@@ -40,13 +58,15 @@ const ProjeForm = ({
                     )
                   )}
                 </Field>
-                <Field name="destek" component={FormSelect} label="Destek">
-                  {destekData?.map(({ isim }, index) => (
-                    <MenuItem value={isim} default key={index}>
-                      {isim}
-                    </MenuItem>
-                  ))}
-                </Field>
+                {!loading && (
+                  <Field name="destek" component={FormSelect} label="Destek">
+                    {response?.map(({ isim }, index) => (
+                      <MenuItem value={isim} default key={index}>
+                        {isim}
+                      </MenuItem>
+                    ))}
+                  </Field>
+                )}
               </Fragment>
             )}
 
@@ -82,10 +102,10 @@ const ProjeForm = ({
               type="submit"
               sx={{ width: "100%" }}
               variant="contained"
-              color="secondary"
+              color="primary"
               endIcon={<SendIcon />}
             >
-              Ekle
+              {buttonName}
             </Button>
           </Stack>
         </Form>
@@ -94,4 +114,4 @@ const ProjeForm = ({
   );
 };
 
-export default ProjeForm;
+export default OdemeForm;

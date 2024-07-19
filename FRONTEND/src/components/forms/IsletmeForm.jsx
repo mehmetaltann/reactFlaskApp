@@ -2,10 +2,31 @@ import * as Yup from "yup";
 import FormTextField from "./ui/FormTextField";
 import SendIcon from "@mui/icons-material/Send";
 import FormSelect from "./ui/FormSelect";
+import useAxios from "../../hooks/useAxios";
+import axios from "../../apis/isletmeDb";
 import { Form, Formik, Field } from "formik";
 import { Stack, MenuItem, Button } from "@mui/material";
+import { useEffect } from "react";
 
-export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
+export const IsletmeForm = ({
+  initialData,
+  submitHandler,
+  buttonName = "EKLE",
+}) => {
+  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+
+  useEffect(() => {
+    const fetchSektorData = () => {
+      axiosFetch({
+        axiosInstance: axios,
+        method: "GET",
+        url: "/sektordata",
+      });
+    };
+
+    fetchSektorData();
+  }, []);
+
   const validateSchema = Yup.object().shape({
     unvan: Yup.string().required("Gerekli").min(2, "En az 5 Karakter"),
     sistemId: Yup.string().required("Boş Olamaz"),
@@ -20,6 +41,7 @@ export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
       initialValues={initialData}
       onSubmit={submitHandler}
       validationSchema={validateSchema}
+      validateOnChange={false}
     >
       {({ values }) => (
         <Form>
@@ -44,13 +66,16 @@ export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
                 size="small"
               />
             </Stack>
-            <Field name="naceKodu" component={FormSelect} label="Sektör">
-              {sektorData?.map(({ isim }, index) => (
-                <MenuItem value={isim} key={index}>
-                  {isim}
-                </MenuItem>
-              ))}
-            </Field>
+            {!loading && (
+              <Field name="naceKodu" component={FormSelect} label="Sektör">
+                {response?.map(({ isim }, index) => (
+                  <MenuItem value={isim} key={index}>
+                    {isim}
+                  </MenuItem>
+                ))}
+              </Field>
+            )}
+
             <Stack direction={"row"} spacing={1}>
               <FormTextField
                 sx={{ width: "100%" }}
@@ -106,7 +131,7 @@ export const IsletmeForm = ({ sektorData, initialData, submitHandler }) => {
               color="primary"
               endIcon={<SendIcon />}
             >
-              Ekle
+              {buttonName}
             </Button>
           </Stack>
         </Form>

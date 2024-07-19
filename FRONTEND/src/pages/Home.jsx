@@ -7,7 +7,6 @@ import useAxios from "../hooks/useAxios";
 import axios from "../apis/isletmeDb";
 import { PageWrapper } from "../layouts/Wrappers";
 import { useState, useEffect, Fragment } from "react";
-import { Typography } from "@mui/material";
 
 const Home = () => {
   const [searchData, setSearchData] = useState({
@@ -47,14 +46,15 @@ const Home = () => {
   return (
     <PageWrapper>
       <Grid container alignItems={"center"} justifyContent={"center"}>
-        <Grid xs={12}>
-          <HomeSearchBar
-            searchData={searchData}
-            setSearchData={setSearchData}
-          />
-        </Grid>
-        {response.length !== 0 && (
+        {response.length !== 0 ? (
           <Fragment>
+            <Grid xs={12}>
+              <HomeSearchBar
+                searchData={searchData}
+                setSearchData={setSearchData}
+                isletme={response}
+              />
+            </Grid>
             <Grid xs={12}>
               <HomeInfoSection isletme={response} />
             </Grid>
@@ -65,9 +65,19 @@ const Home = () => {
               />
             </Grid>
             <Grid xs={12}>
-              <HomeTableSection isletme={response} />
+              <HomeTableSection
+                isletme={response}
+                setSearchData={setSearchData}
+              />
             </Grid>
           </Fragment>
+        ) : (
+          <Grid xs={12}>
+            <HomeSearchBar
+              searchData={searchData}
+              setSearchData={setSearchData}
+            />
+          </Grid>
         )}
       </Grid>
     </PageWrapper>

@@ -28,7 +28,7 @@ const useAxios = () => {
     return () => controller && controller.abort();
   }, [controller]);
 
-  return [response, error, loading, axiosFetch,setResponse];
+  return [response, error, loading, axiosFetch, setResponse];
 };
 
 export default useAxios;

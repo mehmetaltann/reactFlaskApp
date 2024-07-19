@@ -14,7 +14,7 @@ const FormTextField = ({ name, ...otherProps }) => {
     configTextField.helperText = meta.error;
   }
 
-  return <TextField {...configTextField} />;
+  return <TextField {...configTextField}  />;
 };
 
 export default FormTextField;

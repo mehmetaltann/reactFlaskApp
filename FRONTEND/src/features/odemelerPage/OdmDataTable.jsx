@@ -47,15 +47,7 @@ const OdmDataTable = ({ odemeDurum }) => {
       ? result?.filter((item) => item.durum === odemeDurum)
       : result;
 
-  /*
-
-
-  const totalPayment = filteredData
-    .reduce((n, { tutar }) => n + tutar, 0)
-    .toFixed(2);
-
-  */
-
+      
   const columns = [
     stringColumn("unvan", "Unvan", 400),
     stringColumn("vergiNo", "Vergi No", 120, {

@@ -24,7 +24,7 @@ const ModalButton = ({
 }) => {
   const modalStyle = {
     position: "absolute",
-    top: "40%",
+    top: "50%",
     left: "50%",
     height: height,
     width: { xs: "85%", sm: "65%", md: "60%", lg: "40%", xl: "35%" },

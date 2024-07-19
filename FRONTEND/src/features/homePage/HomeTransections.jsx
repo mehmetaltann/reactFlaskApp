@@ -1,21 +1,46 @@
-import { Fragment, useState } from "react";
-import { sektorData } from "../../utils/sektorData";
-import { programData } from "../../utils/programData";
-import { destekData } from "../../utils/destekData";
-import { todayDateInput } from "../../utils/time-functions";
-import { Card, Stack } from "@mui/material";
 import useAxios from "../../hooks/useAxios";
 import axios from "../../apis/isletmeDb";
 import ModalButton from "../../components/modal/ModalButton";
 import OdemeForm from "../../components/forms/OdemeForm";
 import ProjeForm from "../../components/forms/ProjeForm";
 import IsletmeForm from "../../components/forms/IsletmeForm";
+import { Fragment, useState } from "react";
+import { todayDateInput } from "../../utils/time-functions";
+import { Card, Stack } from "@mui/material";
+import { getChangedValues } from "../../utils/helper-functions";
+import { Snackbar, Alert } from "@mui/material";
 
 const HomeTransections = ({ isletme, setSearchData }) => {
   const [openUpdateIsletmeModal, setOpenUpdateIsletmeModal] = useState(false);
   const [openAddProjeModal, setOpenAddProjeModal] = useState(false);
   const [openAddOdemeModal, setOpenAddOdemeModal] = useState(false);
+  const [openSnack, setOpenSnack] = useState(false);
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
+
+  const isletmeInitialValues = {
+    unvan: isletme.unvan,
+    vergiNo: isletme.vergiNo,
+    sistemId: isletme.sistemId,
+    naceKodu: isletme.naceKodu,
+    yetkili: isletme.yetkili,
+    notlar: isletme.notlar ?? "",
+    adres: isletme.adres,
+    tel1: isletme.tel1 ?? "",
+    tel2: isletme.tel2 ?? "",
+    uets: isletme.uets ?? "",
+    mail: isletme.mail ?? "",
+  };
+
+  const updateIsletme = (updateData) => {
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: "/isletmeguncelle/" + isletme.id,
+      requestConfig: {
+        data: updateData,
+      },
+    });
+  };
 
   const addProje = (postData) => {
     axiosFetch({
@@ -40,22 +65,14 @@ const HomeTransections = ({ isletme, setSearchData }) => {
   };
 
   const isletmeUpdatesubmitHandler = (values) => {
-    const editIsletmeRecord = {
-      id: values.id,
-      unvan: values.unvan,
-      vergiNo: values.vergiNo,
-      sistemId: values.sistemId,
-      naceKodu: values.naceKodu,
-      yetkili: values.yetkili,
-      notlar: values.notlar,
-      adres: values.adres,
-      tel1: values.tel1,
-      tel2: values.tel2,
-      uets: values.uets,
-      mail: values.mail,
-      projeler: values.projeler,
-    };
+    const editIsletmeRecord = getChangedValues(values, isletmeInitialValues);
+    updateIsletme(editIsletmeRecord);
     setOpenUpdateIsletmeModal(false);
+    setSearchData((prevFormData) => ({
+      ...prevFormData,
+      id: isletme.id,
+    }));
+    setOpenSnack(true);
   };
 
   const projeAddSubmitHandler = (values) => {
@@ -80,6 +97,7 @@ const HomeTransections = ({ isletme, setSearchData }) => {
       ...prevFormData,
       id: values.isletmeId,
     }));
+    setOpenSnack(true);
   };
 
   const odemeAddSubmitHandler = (values) => {
@@ -101,12 +119,35 @@ const HomeTransections = ({ isletme, setSearchData }) => {
       ...prevFormData,
       id: values.isletmeId,
     }));
+    setOpenSnack(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSnack(false);
   };
 
   return (
     <Fragment>
       {isletme && (
         <Card sx={{ mt: 1, p: 1 }}>
+          <Snackbar
+            open={openSnack}
+            autoHideDuration={2000}
+            onClose={handleClose}
+          >
+            <Alert
+              severity="success"
+              variant="filled"
+              sx={{ width: "100%" }}
+              onClose={handleClose}
+            >
+              {response.message}
+            </Alert>
+          </Snackbar>
           <Stack
             direction={{ sm: "row" }}
             justifyContent={"space-around"}
@@ -118,7 +159,7 @@ const HomeTransections = ({ isletme, setSearchData }) => {
               title="İsletme Bilgileri Güncelle"
               buttonTitle="Firma Bilgisi Güncelle"
               color="primary"
-              height="65vh"
+              height="75vh"
               width="80vh"
               maxW="33%"
               minW="33%"
@@ -128,22 +169,8 @@ const HomeTransections = ({ isletme, setSearchData }) => {
             >
               <IsletmeForm
                 submitHandler={isletmeUpdatesubmitHandler}
-                sektorData={sektorData}
-                initialData={{
-                  id: isletme.id,
-                  unvan: isletme.unvan,
-                  vergiNo: isletme.vergiNo,
-                  sistemId: isletme.sistemId,
-                  naceKodu: isletme.naceKodu,
-                  yetkili: isletme.yetkili,
-                  notlar: isletme.notlar ?? "",
-                  adres: isletme.adres,
-                  tel1: isletme.tel1 ?? "",
-                  tel2: isletme.tel2 ?? "",
-                  uets: isletme.uets ?? "",
-                  mail: isletme.mail ?? "",
-                  projeler: isletme.projeler ?? "",
-                }}
+                initialData={isletmeInitialValues}
+                buttonName="GÜNCELLE"
               />
             </ModalButton>
 
@@ -162,7 +189,6 @@ const HomeTransections = ({ isletme, setSearchData }) => {
             >
               <ProjeForm
                 submitHandler={projeAddSubmitHandler}
-                programData={programData}
                 initialData={{
                   program: "",
                   baslamaTarihi: todayDateInput,
@@ -188,7 +214,6 @@ const HomeTransections = ({ isletme, setSearchData }) => {
             >
               <OdemeForm
                 submitHandler={odemeAddSubmitHandler}
-                destekData={destekData}
                 isletme={isletme}
                 initialData={{
                   projeId: "",
