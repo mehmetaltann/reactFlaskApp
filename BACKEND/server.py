@@ -26,20 +26,19 @@ def findIsletme(aramatype, aramatext):
 
     if aramatype == "byunvan":
         pattern = re.compile(f"^{aramatext}", re.IGNORECASE)
-        isletmeler = db.find({"unvan": pattern})
+        isletmeler = db.find({"unvan": pattern}, {"_id": 0})
         if not isletmeler:
             return jsonify(message="Böyle bir işletme bulunmuyor"), 401
         isletme = isletmeler[0]
     elif aramatype == "byvergino":
-        isletme = db.find_one({"vergiNo": aramatext})
+        isletme = db.find_one({"vergiNo": aramatext}, {"_id": 0})
         if not isletme:
             return jsonify(message="Böyle bir işletme bulunmuyor"), 401
     elif aramatype == "byid":
-        isletme = db.find_one({"id": int(aramatext)})
+        isletme = db.find_one({"id": int(aramatext)}, {"_id": 0})
         if not isletme:
             return jsonify(message="Böyle bir işletme bulunmuyor"), 401
 
-    isletme['_id'] = str(isletme['_id'])
     if isletme["projeler"]:
         for proje in isletme["projeler"]:
             if proje['_id']:
@@ -84,10 +83,13 @@ def addOdeme():
 ###################################
 
 
-@ app.route("/isletmesil/<isletmeId>", methods=["GET", "DELETE"])
+@ app.route("/isletmesil/<isletmeId>", methods=["GET", "POST"])
 def deleteIsletme(isletmeId):
-    print(isletmeId)
-    db.delete_one({'id': isletmeId})
+    res = db.find_one({'id': isletmeId}, {"_id": 0})
+    if res["projeler"]:
+        return jsonify(message="Bu İşletme Silinemez"), 200
+    else:
+        db.delete_one({'id': isletmeId})
     return jsonify(message="İşletme Silindi"), 200
 
 
@@ -112,7 +114,6 @@ def deleteOdeme(isletmeId, projeId, odemeId):
 ###################################
 @ app.route("/isletmeguncelle/<isletmeId>", methods=["GET", "POST"])
 def updateIsletme(isletmeId):
-    print(isletmeId)
     postDataDict = request.get_json()
     db.update_one({'id': isletmeId}, {
                   '$set': postDataDict["data"]})
@@ -156,30 +157,164 @@ def updateOdeme(isletmeId, projeId, odemeId):
 ###################################
 @app.route("/sektordata", methods=["GET"])
 def getSektors():
-    allSektorData = dbSektor.find({})
+    allSektorData = dbSektor.find({}, {"_id": 0})
     emptyList = []
     for sektorData in allSektorData:
-        sektorData['_id'] = str(sektorData['_id'])
         emptyList.append(sektorData)
     return jsonify(emptyList)
+
 
 @app.route("/programdata", methods=["GET"])
 def getPrograms():
-    allSektorData = dbProgram.find({})
+    allSektorData = dbProgram.find({}, {"_id": 0})
     emptyList = []
     for sektorData in allSektorData:
-        sektorData['_id'] = str(sektorData['_id'])
         emptyList.append(sektorData)
     return jsonify(emptyList)
 
+
 @app.route("/destekdata", methods=["GET"])
 def getdestekss():
-    allSektorData = dbDestek.find({})
+    allSektorData = dbDestek.find({}, {"_id": 0})
     emptyList = []
     for sektorData in allSektorData:
-        sektorData['_id'] = str(sektorData['_id'])
         emptyList.append(sektorData)
     return jsonify(emptyList)
+
+# Queries
+###################################
+
+
+@app.route("/isletmeler", methods=["GET"])
+def getIsletmeler():
+    isletmeler = db.aggregate(
+        [
+            {
+                "$project": {
+                    "_id": 0,
+                    "id": "$id",
+                    "unvan": "$unvan",
+                    "vergiNo": "$vergiNo",
+                    "naceKodu": "$naceKodu",
+                    "mail": "$mail",
+                    "notlar": "$notlar",
+                }
+            }
+        ]
+    )
+    emptyList = []
+    for isletme in isletmeler:
+        emptyList.append(isletme)
+    return jsonify(emptyList)
+
+
+@app.route("/projeler/<durum>/", methods=["GET"])
+def getProjeler(durum):
+    emptyList = []
+    if durum == "Tümü":
+        projeler = db.aggregate(
+            [
+                {
+                    "$unwind": "$projeler"
+                },
+                {
+                    "$project": {
+                        "_id": 0,
+                        "unvan": "$unvan",
+                        "isletmeId": "$id",
+                        "vergiNo": "$vergiNo",
+                        "program": "$projeler.program",
+                        "id": "$projeler.id",
+                        "baslamaTarihi": "$projeler.baslamaTarihi",
+                        "sure": "$projeler.sure",
+                        "tamamlanmaTarihi": "$projeler.tamamlanmaTarihi",
+                        "takipTarihi": "$projeler.takipTarihi",
+                        "durum": "$projeler.durum"
+                    }
+                }
+            ]
+        )
+        for proje in projeler:
+            emptyList.append(proje)
+    else:
+        projeler = db.aggregate(
+            [
+                {
+                    "$unwind": "$projeler"
+                },
+                {
+                    "$match": {
+                        "projeler.durum": durum
+                    }
+                },
+                {
+                    "$project": {
+                        "_id": 0,
+                        "unvan": "$unvan",
+                        "vergiNo": "$vergiNo",
+                        "id": "$projeler.id",
+                        "isletmeId": "$id",
+                        "program": "$projeler.program",
+                        "baslamaTarihi": "$projeler.baslamaTarihi",
+                        "sure": "$projeler.sure",
+                        "tamamlanmaTarihi": "$projeler.tamamlanmaTarihi",
+                        "takipTarihi": "$projeler.takipTarihi",
+                        "durum": "$projeler.durum"
+                    }
+                }
+            ]
+        )
+        for proje in projeler:
+            emptyList.append(proje)
+    return jsonify(emptyList)
+
+
+@app.route("/odemeler/<durum>/", methods=["GET"])
+def getOdemeler(durum):
+    emptyList = []
+    odemeler = db.aggregate(
+        [
+            {
+                "$unwind": "$projeler"
+            },
+            {
+                "$addFields": {
+                    "odeme": {
+                        "$filter": {
+                            "input": "$projeler.odemeler",
+                            "as": "odemeler",
+                            "cond": {"$eq": ["$$odemeler.durum", durum]},
+                        },
+                    },
+                },
+            }, {"$unwind": "$odeme"},
+            {
+                "$match": {
+                    "odeme.durum": durum
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "unvan": "$unvan",
+                    "vergiNo": "$vergiNo",
+                    "projeId": "$projeler.id",
+                    "isletmeId": "$id",
+                    "id": "$odeme.id",
+                    "program": "$projeler.program",
+                    "baslamaTarihi": {"$dateFromString": {"dateString": "$projeler.baslamaTarihi"}},
+                    "karekod": "$odeme.karekod",
+                    "tarih": {"$dateFromString": {"dateString": "$odeme.tarih"}},
+                    "tutar": "$odeme.tutar",
+                    "durum": "$odeme.durum"
+                }
+            }
+        ]
+    )
+    for odeme in odemeler:
+        emptyList.append(odeme)
+    return jsonify(emptyList)
+
 
 ###################################
 if __name__ == "__main__":

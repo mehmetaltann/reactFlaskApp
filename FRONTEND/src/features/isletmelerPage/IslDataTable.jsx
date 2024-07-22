@@ -1,12 +1,34 @@
 import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useState, useCallback } from "react";
-import { isletmeData } from "../../utils/isletmeData";
+import useAxios from "../../hooks/useAxios";
+import axios from "../../apis/isletmeDb";
+import { useCallback, useEffect } from "react";
 import { IconButton } from "@mui/material";
 import { stringColumn, actionColumn } from "../../components/tables/columns";
 
 const IslDataTable = () => {
-  const [isletmeler, setIsletmeler] = useState(isletmeData);
+  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+
+  const fetchIsletmeData = () => {
+    axiosFetch({
+      axiosInstance: axios,
+      method: "GET",
+      url: "/isletmeler",
+    });
+  };
+
+  useEffect(() => {
+    fetchIsletmeData();
+  }, []);
+
+  const deleteIsletme = (isletmeId) => {
+    const urlText = "/isletmesil/" + isletmeId;
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: urlText,
+    });
+  };
 
   const getRowSpacing = useCallback((params) => {
     return {
@@ -27,7 +49,15 @@ const IslDataTable = () => {
     actionColumn({
       renderCell: (params, index) => {
         return (
-          <IconButton key={index} size="small" color="error">
+          <IconButton
+            key={index}
+            size="small"
+            color="error"
+            onClick={() => {
+              deleteIsletme(params.row.id);
+              fetchIsletmeData();
+            }}
+          >
             <DeleteIcon />
           </IconButton>
         );
@@ -43,7 +73,7 @@ const IslDataTable = () => {
         getRowSpacing={getRowSpacing}
         density="standard"
         columns={columns}
-        data={isletmeler}
+        data={response}
         disableColumnResize
         disableDensitySelector
         disableColumnFilter

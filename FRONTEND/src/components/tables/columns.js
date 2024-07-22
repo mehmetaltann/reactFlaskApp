@@ -6,10 +6,9 @@ export const dateColumn = (fieldName, headerName, width = 100, rest) => {
     headerName: headerName,
     width: width,
     headerClassName: "header",
-    type: "date",
     headerAlign: "left",
     align: "left",
-    valueFormatter: (params) => dateFormat(params.value),
+    renderCell: (params) => dateFormat(params.value),
     ...rest,
   };
 };

@@ -7,7 +7,6 @@ import { Typography, Paper, Stack } from "@mui/material";
 export const odemeDurumsData = [
   { value: "ÖDENDİ", label: "Ödendi" },
   { value: "BEKLEMEDE", label: "Beklemede" },
-  { value: "TÜMÜ", label: "Tümü" },
 ];
 
 const OdmTableContainer = () => {

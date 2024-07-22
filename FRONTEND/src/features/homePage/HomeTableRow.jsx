@@ -1,5 +1,6 @@
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ProjeForm from "../../components/forms/ProjeForm";
 import OdemeForm from "../../components/forms/OdemeForm";
@@ -11,6 +12,7 @@ import { dateFormat } from "../../utils/time-functions";
 import { Fragment, useState } from "react";
 import {
   Table,
+  Typography,
   IconButton,
   TableBody,
   Box,
@@ -19,7 +21,23 @@ import {
   Collapse,
   Snackbar,
   Alert,
+  Divider,
+  Modal,
 } from "@mui/material";
+
+const modalStyle = {
+  position: "absolute",
+  top: "40%",
+  left: "50%",
+  height: "30vh",
+  width: { sm: "55%", xs: "85%", lg: "30%" },
+  overflow: "auto",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  borderRadius: 2,
+  boxShadow: 24,
+  p: 2,
+};
 
 function Item({ name }) {
   if (name == "Devam Ediyor") {
@@ -64,6 +82,7 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
 
   const [openArrow, setOpenArrow] = useState(false);
   const [openEditProjeModal, setOpenEditProjeModal] = useState(false);
+  const [initalOdemeData, setInitalOdemeData] = useState();
   const [openEditOdemeModal, setOpenEditOdemeModal] = useState(false);
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
@@ -308,26 +327,55 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
                             >
                               <DeleteIcon />
                             </IconButton>
-                            <ModalIconButton
-                              height={{ md: "30vh" }}
-                              modalOpen={openEditOdemeModal}
-                              setModalOpen={setOpenEditOdemeModal}
-                              title="Ödeme Güncelle"
+
+                            <IconButton
+                              size="small"
+                              variant="outlined"
                               color="primary"
-                            >
-                              <OdemeForm
-                                submitHandler={odemeEditSubmitHandler}
-                                updateForm={1}
-                                initialData={{
+                              onClick={() => {
+                                setOpenEditOdemeModal(true);
+                                setInitalOdemeData({
                                   id,
                                   karekod,
                                   tarih,
                                   tutar,
                                   durum,
+                                });
+                              }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <Box
+                              sx={{
+                                outline: 0,
+                                border: "none",
+                              }}
+                            >
+                              <Modal
+                                open={openEditOdemeModal}
+                                onClose={() => setOpenEditOdemeModal(false)}
+                                sx={{
+                                  "& .MuiBackdrop-root": {
+                                    backgroundColor: "transparent",
+                                  },
                                 }}
-                                buttonName="GÜNCELLE"
-                              />
-                            </ModalIconButton>
+                                aria-labelledby="dataForm"
+                                aria-describedby="dataForm-description"
+                              >
+                                <Box sx={modalStyle}>
+                                  <Typography variant="h6">
+                                    Ödeme Güncelle
+                                  </Typography>
+                                  <Divider sx={{ mb: 2 }} />
+                                  <OdemeForm
+                                    submitHandler={odemeEditSubmitHandler}
+                                    updateForm={1}
+                                    initialData={initalOdemeData}
+                                    buttonName="GÜNCELLE"
+                                  />
+                                </Box>
+                              </Modal>
+                            </Box>
                           </TableCell>
                         </TableRow>
                       )

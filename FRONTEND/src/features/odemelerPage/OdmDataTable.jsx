@@ -1,9 +1,11 @@
 import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useState, useCallback } from "react";
-import { isletmeData } from "../../utils/isletmeData";
-import { IconButton } from "@mui/material";
+import useAxios from "../../hooks/useAxios";
+import axios from "../../apis/isletmeDb";
+import moment from "moment";
 import { dateFormat } from "../../utils/time-functions";
+import { useEffect, useCallback } from "react";
+import { IconButton } from "@mui/material";
 import {
   stringColumn,
   actionColumn,
@@ -11,7 +13,42 @@ import {
 } from "../../components/tables/columns";
 
 const OdmDataTable = ({ odemeDurum }) => {
-  const [isletmeler, setIsletmeler] = useState(isletmeData);
+  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+
+  const fetchOdemeData = () => {
+    const urlText = "/odemeler/" + odemeDurum;
+    axiosFetch({
+      axiosInstance: axios,
+      method: "GET",
+      url: urlText,
+    });
+  };
+
+  useEffect(() => {
+    fetchOdemeData();
+  }, [odemeDurum]);
+
+  const updateOdeme = (editOdemeRecord, isletmeId, projeId, odemeId) => {
+    const urlText =
+      "/odemeguncelle/" + isletmeId + "/" + projeId + "/" + odemeId;
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: urlText,
+      requestConfig: {
+        data: editOdemeRecord,
+      },
+    });
+  };
+
+  const deleteOdeme = (isletmeId, projeId, odemeId) => {
+    const urlText = "/odemesil/" + isletmeId + "/" + projeId + "/" + odemeId;
+    axiosFetch({
+      axiosInstance: axios,
+      method: "POST",
+      url: urlText,
+    });
+  };
 
   const getRowSpacing = useCallback((params) => {
     return {
@@ -20,53 +57,36 @@ const OdmDataTable = ({ odemeDurum }) => {
     };
   }, []);
 
-  const result = [];
-
-  for (const isletme of isletmeData) {
-    for (const proje of isletme.projeler) {
-      for (const odeme of proje.odemeler) {
-        const listed = {
-          id: odeme.id,
-          unvan: isletme.unvan,
-          vergiNo: isletme.vergiNo,
-          projeAdı: proje.program + " - " + odeme.destek,
-          projeBaslangic: dateFormat(proje.baslamaTarihi),
-          destek: odeme.destek,
-          karekod: odeme.karekod,
-          tarih: dateFormat(odeme.tarih),
-          tutar: odeme.tutar,
-          durum: odeme.durum,
-        };
-        result.push(listed);
-      }
-    }
-  }
-
-  const filteredData =
-    odemeDurum !== "TÜMÜ"
-      ? result?.filter((item) => item.durum === odemeDurum)
-      : result;
-
-      
   const columns = [
     stringColumn("unvan", "Unvan", 400),
     stringColumn("vergiNo", "Vergi No", 120, {
       cellClassName: "boldandcolorcell",
     }),
-    stringColumn("projeAdı", "Proje", 300),
-
+    dateColumn("baslamaTarihi", "Başlangıç Tarihi", 100),
+    stringColumn("program", "Proje", 300),
     stringColumn("karekod", "Karekod", 80),
-    dateColumn("projeBaslangic", "Başlangıç Tarihi"),
-    dateColumn("tarih", "Tarih"),
+
+    dateColumn("tarih", "Tarih", 100),
     stringColumn("tutar", "Tutar", 110, {
       cellClassName: "boldandcolorcell",
     }),
     stringColumn("durum", "Durum", 120),
-
     actionColumn({
       renderCell: (params, index) => {
         return (
-          <IconButton key={index} size="small" color="error">
+          <IconButton
+            key={index}
+            size="small"
+            color="error"
+            onClick={() => {
+              deleteOdeme(
+                params.row.isletmeId,
+                params.row.projeId,
+                params.row.id
+              );
+              fetchOdemeData();
+            }}
+          >
             <DeleteIcon />
           </IconButton>
         );
@@ -82,7 +102,7 @@ const OdmDataTable = ({ odemeDurum }) => {
         getRowSpacing={getRowSpacing}
         density="standard"
         columns={columns}
-        data={filteredData}
+        data={response}
         disableColumnResize
         disableDensitySelector
         disableColumnFilter
