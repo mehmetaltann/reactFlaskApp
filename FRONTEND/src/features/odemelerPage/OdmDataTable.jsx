@@ -2,18 +2,53 @@ import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../hooks/useAxios";
 import axios from "../../apis/isletmeDb";
-import moment from "moment";
-import { dateFormat } from "../../utils/time-functions";
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
+import { dateFormatNormal } from "../../utils/time-functions";
 import { IconButton } from "@mui/material";
 import {
   stringColumn,
   actionColumn,
   dateColumn,
+  priceColumn,
 } from "../../components/tables/columns";
+
+const useFakeMutation = () => {
+  return useCallback(
+    (item) =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (item.id?.trim() === "") {
+            reject(new Error("Karekod Boş Olamaz"));
+          } else {
+            resolve({
+              id: item.id,
+              karekod: item.karekod,
+              tarih: item.tarih,
+              tutar: item.tutar,
+              durum: item.durum,
+            });
+          }
+        }, 200);
+      }),
+    []
+  );
+};
 
 const OdmDataTable = ({ odemeDurum }) => {
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
+
+  useEffect(() => {
+    fetchOdemeData();
+  }, [odemeDurum]);
+
+  const getRowSpacing = useCallback((params) => {
+    return {
+      top: params.isFirstVisible ? 0 : 2,
+      bottom: params.isLastVisible ? 0 : 4,
+    };
+  }, []);
+
+  const mutateRow = useFakeMutation();
 
   const fetchOdemeData = () => {
     const urlText = "/odemeler/" + odemeDurum;
@@ -23,14 +58,9 @@ const OdmDataTable = ({ odemeDurum }) => {
       url: urlText,
     });
   };
-
-  useEffect(() => {
-    fetchOdemeData();
-  }, [odemeDurum]);
-
-  const updateOdeme = (editOdemeRecord, isletmeId, projeId, odemeId) => {
-    const urlText =
-      "/odemeguncelle/" + isletmeId + "/" + projeId + "/" + odemeId;
+  const updateOdeme = (editOdemeRecord) => {
+    const { id, projeId, isletmeId } = editOdemeRecord;
+    const urlText = "/odemeguncelle/" + isletmeId + "/" + projeId + "/" + id;
     axiosFetch({
       axiosInstance: axios,
       method: "POST",
@@ -50,28 +80,63 @@ const OdmDataTable = ({ odemeDurum }) => {
     });
   };
 
-  const getRowSpacing = useCallback((params) => {
-    return {
-      top: params.isFirstVisible ? 0 : 2,
-      bottom: params.isLastVisible ? 0 : 4,
-    };
+  const processRowUpdate = useCallback(
+    async (newRow) => {
+      const newRecord = {
+        id: newRow.id,
+        isletmeId: newRow.isletmeId,
+        projeId: newRow.projeId,
+        karekod: newRow.karekod,
+        tarih: dateFormatNormal(newRow.tarih),
+        tutar: newRow.tutar,
+        durum: newRow.durum,
+      };
+      updateOdeme(newRecord);
+      fetchOdemeData();
+      const res = await mutateRow(newRow);
+      return res;
+    },
+
+    [mutateRow]
+  );
+
+  const handleProcessRowUpdateError = useCallback((error) => {
+    console.log(error);
   }, []);
 
   const columns = [
     stringColumn("unvan", "Unvan", 400),
-    stringColumn("vergiNo", "Vergi No", 120, {
+    stringColumn("vergiNo", "Vergi No", 110, {
       cellClassName: "boldandcolorcell",
     }),
-    dateColumn("baslamaTarihi", "Başlangıç Tarihi", 100),
-    stringColumn("program", "Proje", 300),
-    stringColumn("karekod", "Karekod", 80),
+    dateColumn("baslamaTarihi", "Proje Başlama", 100),
+    stringColumn("program", "Proje", 250),
+    stringColumn("karekod", "Karekod", 100, {
+      cellClassName: "boldandcolorcell",
+      editable: true,
+    }),
 
-    dateColumn("tarih", "Tarih", 100),
-    stringColumn("tutar", "Tutar", 110, {
-      cellClassName: "boldandcolorcell",
+    dateColumn("tarih", "Tarih", 100, {
+      editable: true,
     }),
-    stringColumn("durum", "Durum", 120),
+    priceColumn("tutar", "Tutar", 120, {
+      cellClassName: "boldandcolorcell",
+      editable: true,
+    }),
+    {
+      field: "durum",
+      headerName: "Durum",
+      width: 120,
+      editable: true,
+      type: "singleSelect",
+      valueOptions: ["ÖDENDİ", "BEKLEMEDE"],
+      headerClassName: "header",
+      headerAlign: "left",
+      align: "left",
+    },
+    stringColumn("gecenGunsayisi", "Gün", 80),
     actionColumn({
+      align: "center",
       renderCell: (params, index) => {
         return (
           <IconButton
@@ -106,6 +171,8 @@ const OdmDataTable = ({ odemeDurum }) => {
         disableColumnResize
         disableDensitySelector
         disableColumnFilter
+        processRowUpdate={processRowUpdate}
+        onProcessRowUpdateError={handleProcessRowUpdateError}
       />
     </div>
   );

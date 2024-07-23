@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, memo } from "react";
 import { Card, Divider, Stack, Typography } from "@mui/material";
 import InfoBox from "../../components/homePageComp/InfoBox";
 import Grid from "@mui/material/Unstable_Grid2";
@@ -64,4 +64,4 @@ const HomeInfoSection = ({ isletme }) => {
   );
 };
 
-export default HomeInfoSection;
+export default memo(HomeInfoSection);

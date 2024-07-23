@@ -3,6 +3,7 @@ import Isletmeler from "./pages/Isletmeler";
 import Odemeler from "./pages/Odemeler";
 import Projeler from "./pages/Projeler";
 import NavBar from "./layouts/NavBar";
+import Parametreler from "./pages/Parametreler"
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 
 const routes = [
@@ -21,6 +22,9 @@ const routes = [
   {
     path: "/odemeler",
     component: Odemeler,
+  },{
+    path: "/parametreler",
+    component: Parametreler,
   },
 ];
 

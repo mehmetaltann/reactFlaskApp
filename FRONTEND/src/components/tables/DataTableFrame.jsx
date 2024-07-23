@@ -41,6 +41,12 @@ const DataTableFrame = (props) => {
           color: "primary.main",
           fontWeight: "600",
         },
+        ".highlight": {
+          bgcolor: "#DDDDDD",
+          "&:hover": {
+            bgcolor: "#EEEEEE",
+          },
+        },
         ...sxProps,
       }}
       disableRowSelectionOnClick

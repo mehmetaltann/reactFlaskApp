@@ -225,13 +225,20 @@ def getProjeler(durum):
                         "vergiNo": "$vergiNo",
                         "program": "$projeler.program",
                         "id": "$projeler.id",
-                        "baslamaTarihi": "$projeler.baslamaTarihi",
+                        "baslamaTarihi": {"$dateFromString": {"dateString": "$projeler.baslamaTarihi"}},
                         "sure": "$projeler.sure",
-                        "tamamlanmaTarihi": "$projeler.tamamlanmaTarihi",
-                        "takipTarihi": "$projeler.takipTarihi",
+                        "tamamlanmaTarihi": {"$dateFromString": {"dateString": "$projeler.tamamlanmaTarihi"}},
+                        "takipTarihi": {"$dateFromString": {"dateString": "$projeler.takipTarihi"}},
+                        "gecenGunsayisi": {
+                            "$dateDiff": {
+                                "startDate": "$$NOW",
+                                "endDate": {"$dateFromString": {"dateString": "$projeler.takipTarihi"}},
+                                "unit": "day",
+                            },
+                        },
                         "durum": "$projeler.durum"
                     }
-                }
+                }, {"$sort": {"gecenGunsayisi": 1}}
             ]
         )
         for proje in projeler:
@@ -255,13 +262,20 @@ def getProjeler(durum):
                         "id": "$projeler.id",
                         "isletmeId": "$id",
                         "program": "$projeler.program",
-                        "baslamaTarihi": "$projeler.baslamaTarihi",
+                        "baslamaTarihi": {"$dateFromString": {"dateString": "$projeler.baslamaTarihi"}},
                         "sure": "$projeler.sure",
-                        "tamamlanmaTarihi": "$projeler.tamamlanmaTarihi",
-                        "takipTarihi": "$projeler.takipTarihi",
+                        "tamamlanmaTarihi": {"$dateFromString": {"dateString": "$projeler.tamamlanmaTarihi"}},
+                        "takipTarihi": {"$dateFromString": {"dateString": "$projeler.takipTarihi"}},
+                        "gecenGunsayisi": {
+                            "$dateDiff": {
+                                "startDate": "$$NOW",
+                                "endDate": {"$dateFromString": {"dateString": "$projeler.takipTarihi"}},
+                                "unit": "day",
+                            },
+                        },
                         "durum": "$projeler.durum"
                     }
-                }
+                }, {"$sort": {"gecenGunsayisi": 1}}
             ]
         )
         for proje in projeler:
@@ -306,9 +320,17 @@ def getOdemeler(durum):
                     "karekod": "$odeme.karekod",
                     "tarih": {"$dateFromString": {"dateString": "$odeme.tarih"}},
                     "tutar": "$odeme.tutar",
-                    "durum": "$odeme.durum"
+                    "durum": "$odeme.durum",
+                    "gecenGunsayisi": {
+                        "$dateDiff": {
+                            "startDate": {"$dateFromString": {"dateString": "$odeme.tarih"}},
+                            "endDate": "$$NOW",
+                            "unit": "day",
+                        },
+                    },
                 }
-            }
+            },
+            {"$sort": {"gecenGunsayisi": -1}}
         ]
     )
     for odeme in odemeler:

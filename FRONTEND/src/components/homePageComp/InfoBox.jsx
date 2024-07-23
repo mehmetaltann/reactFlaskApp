@@ -1,15 +1,10 @@
-import { Typography, Stack, IconButton, Paper } from "@mui/material";
-import { Fragment } from "react";
+import { Typography, Stack } from "@mui/material";
+import { Fragment, memo } from "react";
 
 const InfoBox = ({ data, title }) => {
   return (
     <Fragment>
-      <Stack
-        direction="row"
-        spacing={1}
-        
-        alignItems={"center"}
-      >
+      <Stack direction="row" spacing={1} alignItems={"center"}>
         <Typography
           variant="subtitle1"
           sx={{ color: "primary.main", fontWeight: 600 }}
@@ -24,4 +19,4 @@ const InfoBox = ({ data, title }) => {
   );
 };
 
-export default InfoBox;
+export default memo(InfoBox);
