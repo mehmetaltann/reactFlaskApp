@@ -5,7 +5,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ModalButton from "../../components/modal/ModalButton";
 import IsletmeForm from "../../components/forms/IsletmeForm";
 import useAxios from "../../hooks/useAxios";
-import axios from "../../apis/isletmeDb";
 import {
   Card,
   TextField,
@@ -17,11 +16,7 @@ import {
   Alert,
 } from "@mui/material";
 
-const HomeSearchBar = ({
-  searchData,
-  setSearchData,
-  isletme,
-}) => {
+const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
   const [openAddIsletmeModal, setOpenAddIsletmeModal] = useState(false);
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
@@ -34,27 +29,7 @@ const HomeSearchBar = ({
     }));
   };
 
-  const postData = (postData) => {
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: "/isletmeekle",
-      requestConfig: {
-        data: postData,
-      },
-    });
-  };
-
-  const deleteIsletme = (isletmeId) => {
-    const urlText = "/isletmesil/" + isletmeId;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "DELETE",
-      url: urlText,
-    });
-  };
-
-  const isletmeAddSubmitHandler = (values) => {
+  const isletmeAddSubmitHandler = async (values) => {
     let isletmeId = "id" + Math.random().toString(20).slice(2);
     const addIsletmeRecord = {
       id: isletmeId,
@@ -71,7 +46,13 @@ const HomeSearchBar = ({
       mail: values.mail,
       projeler: [],
     };
-    postData(addIsletmeRecord);
+    await axiosFetch({
+      method: "POST",
+      url: "/isletmeekle",
+      requestConfig: {
+        data: addIsletmeRecord,
+      },
+    });
     setOpenAddIsletmeModal(false);
     setSearchData((prevFormData) => ({
       ...prevFormData,
@@ -84,7 +65,6 @@ const HomeSearchBar = ({
     if (reason === "clickaway") {
       return;
     }
-
     setOpenSnack(false);
   };
 
@@ -173,7 +153,10 @@ const HomeSearchBar = ({
                   color="primary"
                   onClick={() => {
                     const isletmeId = isletme.id;
-                    deleteIsletme(isletmeId);
+                    axiosFetch({
+                      method: "DELETE",
+                      url: "/isletmesil/" + isletmeId,
+                    });
                     setSearchData((prevFormData) => ({
                       ...prevFormData,
                       id: isletmeId,

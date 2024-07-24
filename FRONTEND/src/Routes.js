@@ -3,8 +3,16 @@ import Isletmeler from "./pages/Isletmeler";
 import Odemeler from "./pages/Odemeler";
 import Projeler from "./pages/Projeler";
 import NavBar from "./layouts/NavBar";
-import Parametreler from "./pages/Parametreler"
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import Parametreler from "./pages/Parametreler";
+import UserLogin from "./pages/UserLogin";
+import UserRegister from "./pages/UserRegister";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
 
 const routes = [
   {
@@ -22,17 +30,26 @@ const routes = [
   {
     path: "/odemeler",
     component: Odemeler,
-  },{
+  },
+  {
     path: "/parametreler",
     component: Parametreler,
   },
 ];
 
 export const Rotalar = () => {
+  const user = localStorage.getItem("token");
+  //const user = "hep var";
   return (
     <BrowserRouter>
       <Routes>
-        {
+        {!user ? (
+          <>
+            <Route path="/" element={<Navigate replace to="/login" />} />
+            <Route path="/login" element={<UserLogin />} />
+            <Route path="/register" element={<UserRegister />} />
+          </>
+        ) : (
           <Route
             element={
               <>
@@ -49,7 +66,7 @@ export const Rotalar = () => {
               />
             ))}
           </Route>
-        }
+        )}
       </Routes>
     </BrowserRouter>
   );

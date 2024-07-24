@@ -47,6 +47,15 @@ const DataTableFrame = (props) => {
             bgcolor: "#EEEEEE",
           },
         },
+        "&.MuiDataGrid-root--densityCompact .MuiDataGrid-cell": {
+          py: 1,
+        },
+        "&.MuiDataGrid-root--densityStandard .MuiDataGrid-cell": {
+          py: "9px",
+        },
+        "&.MuiDataGrid-root--densityComfortable .MuiDataGrid-cell": {
+          py: "22px",
+        },
         ...sxProps,
       }}
       disableRowSelectionOnClick

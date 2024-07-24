@@ -4,10 +4,9 @@ import FormDatePicker from "./ui/FormDatePicker";
 import SendIcon from "@mui/icons-material/Send";
 import FormSelect from "./ui/FormSelect";
 import useAxios from "../../hooks/useAxios";
-import axios from "../../apis/isletmeDb";
 import { Form, Formik, Field } from "formik";
 import { Stack, MenuItem, Button } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 const ProjeForm = ({
   initialData,
@@ -17,15 +16,14 @@ const ProjeForm = ({
 }) => {
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
 
-  useEffect(() => {
-    const fetchProgramData = () => {
-      axiosFetch({
-        axiosInstance: axios,
-        method: "GET",
-        url: "/programdata",
-      });
-    };
+  const fetchProgramData = useCallback(() => {
+    axiosFetch({
+      method: "GET",
+      url: "/programdata",
+    });
+  }, []);
 
+  useEffect(() => {
     fetchProgramData();
   }, []);
 

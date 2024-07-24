@@ -6,7 +6,6 @@ import ProjeForm from "../../components/forms/ProjeForm";
 import OdemeForm from "../../components/forms/OdemeForm";
 import ModalIconButton from "../../components/modal/ModelIconButton";
 import useAxios from "../../hooks/useAxios";
-import axios from "../../apis/isletmeDb";
 import { getChangedValues } from "../../utils/helper-functions";
 import { dateFormat } from "../../utils/time-functions";
 import { Fragment, useState } from "react";
@@ -102,51 +101,15 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
     durum,
   };
 
-  const updateOdeme = (editOdemeRecord, odemeId) => {
-    const urlText = "/odemeguncelle/" + isletmeId + "/" + id + "/" + odemeId;
-    axiosFetch({
-      axiosInstance: axios,
+  const projeEditSubmitHandler = async (values) => {
+    const editProjeRecord = getChangedValues(values, projeInitialValues);
+    await axiosFetch({
       method: "POST",
-      url: urlText,
-      requestConfig: {
-        data: editOdemeRecord,
-      },
-    });
-  };
-
-  const deleteOdeme = (isletmeId, projeId, odemeId) => {
-    const urlText = "/odemesil/" + isletmeId + "/" + projeId + "/" + odemeId;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: urlText,
-    });
-  };
-
-  const updateProje = (editProjeRecord) => {
-    const urlText = "/projeguncelle/" + isletmeId + "/" + id;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: urlText,
+      url: "/projeguncelle/" + isletmeId + "/" + id,
       requestConfig: {
         data: editProjeRecord,
       },
     });
-  };
-
-  const deleteProje = (isletmeId, projeId) => {
-    const urlText = "/projesil/" + isletmeId + "/" + projeId;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: urlText,
-    });
-  };
-
-  const projeEditSubmitHandler = (values) => {
-    const editProjeRecord = getChangedValues(values, projeInitialValues);
-    updateProje(editProjeRecord);
     setOpenEditProjeModal(false);
     setSearchData((prevFormData) => ({
       ...prevFormData,
@@ -155,7 +118,7 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
     setOpenSnack(true);
   };
 
-  const odemeEditSubmitHandler = (values) => {
+  const odemeEditSubmitHandler = async (values) => {
     const editOdemeRecord = {
       id: values.id,
       karekod: values.karekod.toUpperCase(),
@@ -163,7 +126,13 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
       tutar: values.tutar,
       durum: values.durum,
     };
-    updateOdeme(editOdemeRecord, values.id);
+    await axiosFetch({
+      method: "POST",
+      url: "/odemeguncelle/" + isletmeId + "/" + id + "/" + values.id,
+      requestConfig: {
+        data: editOdemeRecord,
+      },
+    });
     setOpenEditOdemeModal(false);
     setSearchData((prevFormData) => ({
       ...prevFormData,
@@ -176,7 +145,6 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
     if (reason === "clickaway") {
       return;
     }
-
     setOpenSnack(false);
   };
 
@@ -240,7 +208,10 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
               size="small"
               color="primary"
               onClick={() => {
-                deleteProje(isletmeId, id);
+                axiosFetch({
+                  method: "POST",
+                  url: "/projesil/" + isletmeId + "/" + id,
+                });
                 setSearchData((prevFormData) => ({
                   ...prevFormData,
                   id: isletmeId,
@@ -316,8 +287,17 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
                             <IconButton
                               size="small"
                               color="primary"
-                              onClick={() => {
-                                deleteOdeme(isletmeId, projeId, id);
+                              onClick={async () => {
+                                await axiosFetch({
+                                  method: "POST",
+                                  url:
+                                    "/odemesil/" +
+                                    isletmeId +
+                                    "/" +
+                                    projeId +
+                                    "/" +
+                                    id,
+                                });
                                 setSearchData((prevFormData) => ({
                                   ...prevFormData,
                                   id: isletmeId,

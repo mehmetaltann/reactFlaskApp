@@ -1,5 +1,4 @@
 import useAxios from "../../hooks/useAxios";
-import axios from "../../apis/isletmeDb";
 import ModalButton from "../../components/modal/ModalButton";
 import OdemeForm from "../../components/forms/OdemeForm";
 import ProjeForm from "../../components/forms/ProjeForm";
@@ -31,42 +30,15 @@ const HomeTransections = ({ isletme, setSearchData }) => {
     mail: isletme.mail ?? "",
   };
 
-  const updateIsletme = (updateData) => {
-    axiosFetch({
-      axiosInstance: axios,
+  const isletmeUpdatesubmitHandler = async (values) => {
+    const editIsletmeRecord = getChangedValues(values, isletmeInitialValues);
+    await axiosFetch({
       method: "POST",
       url: "/isletmeguncelle/" + isletme.id,
       requestConfig: {
-        data: updateData,
+        data: editIsletmeRecord,
       },
     });
-  };
-
-  const addProje = (postData) => {
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: "/projeekle",
-      requestConfig: {
-        data: postData,
-      },
-    });
-  };
-
-  const addOdeme = (postData) => {
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: "/odemeekle",
-      requestConfig: {
-        data: postData,
-      },
-    });
-  };
-
-  const isletmeUpdatesubmitHandler = (values) => {
-    const editIsletmeRecord = getChangedValues(values, isletmeInitialValues);
-    updateIsletme(editIsletmeRecord);
     setOpenUpdateIsletmeModal(false);
     setSearchData((prevFormData) => ({
       ...prevFormData,
@@ -75,7 +47,7 @@ const HomeTransections = ({ isletme, setSearchData }) => {
     setOpenSnack(true);
   };
 
-  const projeAddSubmitHandler = (values) => {
+  const projeAddSubmitHandler = async (values) => {
     let projeId = "id" + Math.random().toString(16).slice(2);
     const addProjeRecord = {
       _id: projeId,
@@ -91,7 +63,13 @@ const HomeTransections = ({ isletme, setSearchData }) => {
       durum: "Devam Ediyor",
       odemeler: [],
     };
-    addProje(addProjeRecord);
+    await axiosFetch({
+      method: "POST",
+      url: "/projeekle",
+      requestConfig: {
+        data: addProjeRecord,
+      },
+    });
     setOpenAddProjeModal(false);
     setSearchData((prevFormData) => ({
       ...prevFormData,
@@ -100,7 +78,7 @@ const HomeTransections = ({ isletme, setSearchData }) => {
     setOpenSnack(true);
   };
 
-  const odemeAddSubmitHandler = (values) => {
+  const odemeAddSubmitHandler = async (values) => {
     let odemeId = "id" + Math.random().toString(16).slice(2);
     const addOdemeRecord = {
       _id: odemeId,
@@ -113,7 +91,13 @@ const HomeTransections = ({ isletme, setSearchData }) => {
       destek: values.destek,
       durum: "BEKLEMEDE",
     };
-    addOdeme(addOdemeRecord);
+    await axiosFetch({
+      method: "POST",
+      url: "/odemeekle",
+      requestConfig: {
+        data: addOdemeRecord,
+      },
+    });
     setOpenAddOdemeModal(false);
     setSearchData((prevFormData) => ({
       ...prevFormData,

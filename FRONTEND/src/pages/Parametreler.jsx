@@ -1,28 +1,22 @@
 import Grid from "@mui/material/Unstable_Grid2";
-import useAxios from "../hooks/useAxios";
-import axios from "../apis/isletmeDb";
+import Destekler from "../features/parametrelerPage/Destekler";
+import Programlar from "../features/parametrelerPage/Programlar";
 import { PageWrapper } from "../layouts/Wrappers";
-import { useState, useEffect, Fragment } from "react";
-import { Card, Typography } from "@mui/material";
+import { Card } from "@mui/material";
 
 const Parametreler = () => {
   return (
     <PageWrapper>
       <Grid
         container
-        alignItems={"center"}
-        justifyContent={"center"}
+        
         spacing={2}
       >
-        <Grid xs={12} sx={{p:2}}>
-          <Card>
-            <Typography>Programlar</Typography>
-          </Card>
+        <Grid xs={12} md={6} sx={{ p: 2 }}>
+          <Programlar />
         </Grid>
-        <Grid xs={12} sx={{p:2}}>
-          <Card>
-            <Typography>Destekler</Typography>
-          </Card>
+        <Grid xs={12} md={6} sx={{ p: 2 }}>
+          <Destekler />
         </Grid>
       </Grid>
     </PageWrapper>

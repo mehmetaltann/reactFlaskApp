@@ -4,12 +4,11 @@ import FormDatePicker from "./ui/FormDatePicker";
 import SendIcon from "@mui/icons-material/Send";
 import FormSelect from "./ui/FormSelect";
 import useAxios from "../../hooks/useAxios";
-import axios from "../../apis/isletmeDb";
 import { Form, Formik, Field } from "formik";
 import { Stack, MenuItem, Button } from "@mui/material";
 import { Fragment } from "react";
 import { dateFormat } from "../../utils/time-functions";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 const OdemeForm = ({
   initialData,
@@ -20,15 +19,14 @@ const OdemeForm = ({
 }) => {
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
 
-  useEffect(() => {
-    const fetchDestekData = () => {
-      axiosFetch({
-        axiosInstance: axios,
-        method: "GET",
-        url: "/destekdata",
-      });
-    };
+  const fetchDestekData = useCallback(() => {
+    axiosFetch({
+      method: "GET",
+      url: "/destekdata",
+    });
+  }, []);
 
+  useEffect(() => {
     fetchDestekData();
   }, []);
 

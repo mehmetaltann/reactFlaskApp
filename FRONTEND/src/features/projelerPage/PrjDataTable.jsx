@@ -1,10 +1,9 @@
 import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../hooks/useAxios";
-import axios from "../../apis/isletmeDb";
 import { dateFormatNormal } from "../../utils/time-functions";
-import { useCallback, useEffect } from "react";
-import { IconButton, Typography } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { IconButton, Typography, Snackbar, Alert } from "@mui/material";
 import {
   stringColumn,
   actionColumn,
@@ -36,50 +35,19 @@ const useFakeMutation = () => {
 
 const PrjDataTable = ({ projeDurum }) => {
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const [openSnack, setOpenSnack] = useState(false);
+  const mutateRow = useFakeMutation();
+
+  const fetchProjeData = useCallback(async () => {
+    await axiosFetch({
+      method: "GET",
+      url: "/projeler/" + projeDurum,
+    });
+  }, [projeDurum]);
 
   useEffect(() => {
     fetchProjeData();
   }, [projeDurum]);
-
-  const getRowSpacing = useCallback((params) => {
-    return {
-      top: params.isFirstVisible ? 0 : 2,
-      bottom: params.isLastVisible ? 0 : 4,
-    };
-  }, []);
-
-  const mutateRow = useFakeMutation();
-
-  const fetchProjeData = () => {
-    const urlText = "/projeler/" + projeDurum;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "GET",
-      url: urlText,
-    });
-  };
-
-  const updateProje = (editProjeRecord) => {
-    const { id, isletmeId } = editProjeRecord;
-    const urlText = "/projeguncelle/" + isletmeId + "/" + id;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: urlText,
-      requestConfig: {
-        data: editProjeRecord,
-      },
-    });
-  };
-
-  const deleteProje = (isletmeId, id) => {
-    const urlText = "/projesil/" + isletmeId + "/" + id;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: urlText,
-    });
-  };
 
   const processRowUpdate = useCallback(
     async (newRow) => {
@@ -92,7 +60,14 @@ const PrjDataTable = ({ projeDurum }) => {
         takipTarihi: dateFormatNormal(newRow.takipTarihi),
         durum: newRow.durum,
       };
-      updateProje(newRecord);
+      await axiosFetch({
+        method: "POST",
+        url: "/projeguncelle/" + newRecord.isletmeId + "/" + newRecord.id,
+        requestConfig: {
+          data: newRecord,
+        },
+      });
+      setOpenSnack(true);
       fetchProjeData();
       const res = await mutateRow(newRow);
       return res;
@@ -102,7 +77,7 @@ const PrjDataTable = ({ projeDurum }) => {
   );
 
   const handleProcessRowUpdateError = useCallback((error) => {
-    console.log(error);
+    response.message = error;
   }, []);
 
   const columns = [
@@ -183,29 +158,55 @@ const PrjDataTable = ({ projeDurum }) => {
     actionColumn({
       align: "center",
       renderCell: (params, index) => {
-        return (
-          <IconButton
-            key={index}
-            size="small"
-            color="error"
-            onClick={() => {
-              deleteProje(params.row.isletmeId, params.row.id);
-              fetchProjeData();
-            }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        );
+        if (params.row.numberOfOdeme) {
+          return;
+        } else {
+          return (
+            <IconButton
+              key={index}
+              size="small"
+              color="error"
+              onClick={async () => {
+                await axiosFetch({
+                  method: "POST",
+                  url:
+                    "/projesil/" + params.row.isletmeId + "/" + params.row.id,
+                });
+                setOpenSnack(true);
+                fetchProjeData();
+              }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          );
+        }
       },
     }),
   ];
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSnack(false);
+  };
+
   return (
     <div style={{ height: "100%", width: "100%" }}>
+      <Snackbar open={openSnack} autoHideDuration={1000} onClose={handleClose}>
+        <Alert
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+          onClose={handleClose}
+        >
+          {response.message}
+        </Alert>
+      </Snackbar>
       <DataTableFrame
         getRowHeight={() => "auto"}
-        getEstimatedRowHeight={() => 200}
-        getRowSpacing={getRowSpacing}
+        getEstimatedRowHeight={() => 100}
         density="standard"
         columns={columns}
         data={response}

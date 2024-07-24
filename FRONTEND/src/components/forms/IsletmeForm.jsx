@@ -3,10 +3,9 @@ import FormTextField from "./ui/FormTextField";
 import SendIcon from "@mui/icons-material/Send";
 import FormSelect from "./ui/FormSelect";
 import useAxios from "../../hooks/useAxios";
-import axios from "../../apis/isletmeDb";
 import { Form, Formik, Field } from "formik";
 import { Stack, MenuItem, Button } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 
 export const IsletmeForm = ({
   initialData,
@@ -15,15 +14,14 @@ export const IsletmeForm = ({
 }) => {
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
 
-  useEffect(() => {
-    const fetchSektorData = () => {
-      axiosFetch({
-        axiosInstance: axios,
-        method: "GET",
-        url: "/sektordata",
-      });
-    };
+  const fetchSektorData = useCallback(() => {
+    axiosFetch({
+      method: "GET",
+      url: "/sektordata",
+    });
+  }, []);
 
+  useEffect(() => {
     fetchSektorData();
   }, []);
 

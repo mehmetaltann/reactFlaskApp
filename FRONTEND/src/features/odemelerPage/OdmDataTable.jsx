@@ -1,10 +1,9 @@
 import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../hooks/useAxios";
-import axios from "../../apis/isletmeDb";
 import { useEffect, useCallback, useState } from "react";
 import { dateFormatNormal } from "../../utils/time-functions";
-import { IconButton } from "@mui/material";
+import { IconButton, Snackbar, Alert } from "@mui/material";
 import {
   stringColumn,
   actionColumn,
@@ -36,49 +35,19 @@ const useFakeMutation = () => {
 
 const OdmDataTable = ({ odemeDurum }) => {
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const [openSnack, setOpenSnack] = useState(false);
+  const mutateRow = useFakeMutation();
+
+  const fetchOdemeData = useCallback(async () => {
+    await axiosFetch({
+      method: "GET",
+      url: "/odemeler/" + odemeDurum,
+    });
+  }, [odemeDurum]);
 
   useEffect(() => {
     fetchOdemeData();
   }, [odemeDurum]);
-
-  const getRowSpacing = useCallback((params) => {
-    return {
-      top: params.isFirstVisible ? 0 : 2,
-      bottom: params.isLastVisible ? 0 : 4,
-    };
-  }, []);
-
-  const mutateRow = useFakeMutation();
-
-  const fetchOdemeData = () => {
-    const urlText = "/odemeler/" + odemeDurum;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "GET",
-      url: urlText,
-    });
-  };
-  const updateOdeme = (editOdemeRecord) => {
-    const { id, projeId, isletmeId } = editOdemeRecord;
-    const urlText = "/odemeguncelle/" + isletmeId + "/" + projeId + "/" + id;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: urlText,
-      requestConfig: {
-        data: editOdemeRecord,
-      },
-    });
-  };
-
-  const deleteOdeme = (isletmeId, projeId, odemeId) => {
-    const urlText = "/odemesil/" + isletmeId + "/" + projeId + "/" + odemeId;
-    axiosFetch({
-      axiosInstance: axios,
-      method: "POST",
-      url: urlText,
-    });
-  };
 
   const processRowUpdate = useCallback(
     async (newRow) => {
@@ -91,7 +60,20 @@ const OdmDataTable = ({ odemeDurum }) => {
         tutar: newRow.tutar,
         durum: newRow.durum,
       };
-      updateOdeme(newRecord);
+      await axiosFetch({
+        method: "POST",
+        url:
+          "/odemeguncelle/" +
+          newRecord.isletmeId +
+          "/" +
+          newRecord.projeId +
+          "/" +
+          newRecord.id,
+        requestConfig: {
+          data: newRecord,
+        },
+      });
+      setOpenSnack(true);
       fetchOdemeData();
       const res = await mutateRow(newRow);
       return res;
@@ -101,7 +83,7 @@ const OdmDataTable = ({ odemeDurum }) => {
   );
 
   const handleProcessRowUpdateError = useCallback((error) => {
-    console.log(error);
+    response.message = error;
   }, []);
 
   const columns = [
@@ -144,11 +126,17 @@ const OdmDataTable = ({ odemeDurum }) => {
             size="small"
             color="error"
             onClick={() => {
-              deleteOdeme(
-                params.row.isletmeId,
-                params.row.projeId,
-                params.row.id
-              );
+              axiosFetch({
+                method: "POST",
+                url:
+                  "/odemesil/" +
+                  params.row.isletmeId +
+                  "/" +
+                  params.row.projeId +
+                  "/" +
+                  params.row.id,
+              });
+              setOpenSnack(true);
               fetchOdemeData();
             }}
           >
@@ -159,12 +147,29 @@ const OdmDataTable = ({ odemeDurum }) => {
     }),
   ];
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSnack(false);
+  };
+
   return (
     <div style={{ height: "100%", width: "100%" }}>
+      <Snackbar open={openSnack} autoHideDuration={1000} onClose={handleClose}>
+        <Alert
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+          onClose={handleClose}
+        >
+          {response.message}
+        </Alert>
+      </Snackbar>
       <DataTableFrame
         getRowHeight={() => "auto"}
         getEstimatedRowHeight={() => 200}
-        getRowSpacing={getRowSpacing}
         density="standard"
         columns={columns}
         data={response}

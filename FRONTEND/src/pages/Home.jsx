@@ -4,9 +4,8 @@ import HomeInfoSection from "../features/homePage/HomeInfoSection";
 import HomeTableSection from "../features/homePage/HomeTableSection";
 import HomeTransections from "../features/homePage/HomeTransections";
 import useAxios from "../hooks/useAxios";
-import axios from "../apis/isletmeDb";
 import { PageWrapper } from "../layouts/Wrappers";
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, Fragment, useCallback } from "react";
 
 const Home = () => {
   const [searchData, setSearchData] = useState({
@@ -17,14 +16,12 @@ const Home = () => {
 
   const [response, error, loading, axiosFetch, setResponse] = useAxios();
 
-  const fetchData = (aramatext, aramatype) => {
-    const urlText = "/isletmeara/by" + aramatype + "/" + aramatext;
+  const fetchData = useCallback((aramatext, aramatype) => {
     axiosFetch({
-      axiosInstance: axios,
       method: "GET",
-      url: urlText,
+      url: "/isletmeara/by" + aramatype + "/" + aramatext,
     });
-  };
+  }, []);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
