@@ -48,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-private-property-in-object": "^7.24.7",
     "lodash.debounce": "^4.0.8"
   }
 }
