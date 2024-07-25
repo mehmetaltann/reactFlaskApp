@@ -39,23 +39,23 @@ const modalStyle = {
 };
 
 function Item({ name }) {
-  if (name == "Devam Ediyor") {
+  if (name === "Devam Ediyor") {
     return (
       <TableCell width="10%" sx={{ color: "success.main", fontWeight: 500 }}>
         {name}
       </TableCell>
     );
   } else if (
-    name == "Durduruldu" ||
-    name == "Başarısız Tamamlandı" ||
-    name == "Bilgi Yok"
+    name === "Durduruldu" ||
+    name === "Başarısız Tamamlandı" ||
+    name === "Bilgi Yok"
   ) {
     return (
       <TableCell width="10%" sx={{ color: "error.main", fontWeight: 500 }}>
         {name}
       </TableCell>
     );
-  } else if (name == "Başarıyla Tamamlandı") {
+  } else if (name === "Başarıyla Tamamlandı") {
     return (
       <TableCell width="10%" sx={{ color: "info.main", fontWeight: 500 }}>
         {name}
@@ -83,7 +83,7 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
   const [openEditProjeModal, setOpenEditProjeModal] = useState(false);
   const [initalOdemeData, setInitalOdemeData] = useState();
   const [openEditOdemeModal, setOpenEditOdemeModal] = useState(false);
-  const {response, axiosFetch, resStatus,error} = useAxios();
+  const { response, axiosFetch, resStatus, error } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
 
   const totalPayment = odemeler
@@ -157,7 +157,7 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
           onClose={handleClose}
         >
           <Alert
-            severity={resStatus == 200 ? "success" : "error"}
+            severity={resStatus === 200 ? "success" : "error"}
             variant="filled"
             sx={{ width: "100%" }}
             onClose={handleClose}
@@ -209,7 +209,7 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
           {`${totalPayment} TL`}
         </TableCell>
         <TableCell align="left" width="10%">
-          {odemeler.length == 0 && (
+          {odemeler.length === 0 && (
             <IconButton
               size="small"
               color="primary"
@@ -273,7 +273,7 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
                             sx={{ color: "primary.main", fontWeight: 500 }}
                             width="10%"
                           >{`${tutar.toFixed(2)} TL`}</TableCell>
-                          {durum == "ÖDENDİ" && (
+                          {durum === "ÖDENDİ" && (
                             <TableCell
                               width="10%"
                               sx={{ color: "success.main", fontWeight: 500 }}
@@ -281,7 +281,7 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
                               {durum}
                             </TableCell>
                           )}
-                          {durum == "BEKLEMEDE" && (
+                          {durum === "BEKLEMEDE" && (
                             <TableCell
                               width="10%"
                               sx={{ color: "error.main", fontWeight: 500 }}

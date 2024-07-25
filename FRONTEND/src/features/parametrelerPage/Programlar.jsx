@@ -4,8 +4,7 @@ import useAxios from "../../hooks/useAxios";
 import SendIcon from "@mui/icons-material/Send";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import PageConnectionWait from "../../components/ui/PageConnectionWait";
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback } from "react";
 import {
   Card,
   Typography,
@@ -29,7 +28,7 @@ const Programlar = () => {
       method: "GET",
       url: "/programdata",
     });
-  }, []);
+  }, [axiosFetch]);
 
   useEffect(() => {
     fetchProgramData();

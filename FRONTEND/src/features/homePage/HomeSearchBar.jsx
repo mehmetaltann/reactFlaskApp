@@ -78,7 +78,7 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
           onClose={handleClose}
         >
           <Alert
-            severity={resStatus == 200 ? "success" : "error"}
+            severity={resStatus === 200 ? "success" : "error"}
             variant="filled"
             sx={{ width: "100%" }}
             onClose={handleClose}
@@ -154,7 +154,7 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
                 onChange={handleInputsChange}
               />
             </Grid>
-            {isletme?.projeler.length == 0 && (
+            {isletme?.projeler.length === 0 && (
               <Grid item="true">
                 <IconButton
                   size="small"

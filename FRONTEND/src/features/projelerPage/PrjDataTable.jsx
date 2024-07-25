@@ -43,7 +43,7 @@ const PrjDataTable = ({ projeDurum }) => {
       method: "GET",
       url: "/projeler/" + projeDurum,
     });
-  }, [projeDurum]);
+  }, [projeDurum, axiosFetch]);
 
   useEffect(() => {
     fetchProjeData();
@@ -201,7 +201,7 @@ const PrjDataTable = ({ projeDurum }) => {
           onClose={handleClose}
         >
           <Alert
-            severity={resStatus == 200 ? "success" : "error"}
+            severity={resStatus === 200 ? "success" : "error"}
             variant="filled"
             sx={{ width: "100%" }}
             onClose={handleClose}

@@ -43,7 +43,7 @@ const OdmDataTable = ({ odemeDurum }) => {
       method: "GET",
       url: "/odemeler/" + odemeDurum,
     });
-  }, [odemeDurum]);
+  }, [odemeDurum, axiosFetch]);
 
   useEffect(() => {
     fetchOdemeData();
@@ -164,7 +164,7 @@ const OdmDataTable = ({ odemeDurum }) => {
           onClose={handleClose}
         >
           <Alert
-            severity={resStatus == 200 ? "success" : "error"}
+            severity={resStatus === 200 ? "success" : "error"}
             variant="filled"
             sx={{ width: "100%" }}
             onClose={handleClose}

@@ -19,7 +19,7 @@ export const IsletmeForm = ({
       method: "GET",
       url: "/sektordata",
     });
-  }, []);
+  }, [axiosFetch]);
 
   useEffect(() => {
     fetchSektorData();

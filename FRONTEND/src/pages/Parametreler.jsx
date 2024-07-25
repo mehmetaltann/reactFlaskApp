@@ -2,7 +2,6 @@ import Grid from "@mui/material/Unstable_Grid2";
 import Destekler from "../features/parametrelerPage/Destekler";
 import Programlar from "../features/parametrelerPage/Programlar";
 import { PageWrapper } from "../layouts/Wrappers";
-import { Card } from "@mui/material";
 
 const Parametreler = () => {
   return (

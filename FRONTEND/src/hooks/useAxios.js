@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const BASE_URL = "http://127.0.0.1:5000";
-
 const useAxios = () => {
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("");
@@ -18,7 +16,7 @@ const useAxios = () => {
       setController(ctrl);
       const res = await axios
         .create({
-          baseURL: BASE_URL,
+          baseURL: "https://mehmetaltan.pythonanywhere.com/",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",

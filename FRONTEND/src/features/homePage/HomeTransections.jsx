@@ -125,7 +125,7 @@ const HomeTransections = ({ isletme, setSearchData }) => {
               onClose={handleClose}
             >
               <Alert
-                severity={resStatus == 200 ? "success" : "error"}
+                severity={resStatus === 200 ? "success" : "error"}
                 variant="filled"
                 sx={{ width: "100%" }}
                 onClose={handleClose}
