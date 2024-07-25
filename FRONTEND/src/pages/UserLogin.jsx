@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 
 const UserLogin = () => {
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const { response, axiosFetch } = useAxios();
 
   const handleSubmit = async (event) => {
     event.preventDefault();

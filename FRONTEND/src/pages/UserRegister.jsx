@@ -29,7 +29,7 @@ function Copyright(props) {
 }
 
 const UserRegister = () => {
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const {axiosFetch} = useAxios();
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {

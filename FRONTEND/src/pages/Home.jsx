@@ -6,6 +6,7 @@ import HomeTransections from "../features/homePage/HomeTransections";
 import useAxios from "../hooks/useAxios";
 import { PageWrapper } from "../layouts/Wrappers";
 import { useState, useEffect, Fragment, useCallback } from "react";
+import { Snackbar, Alert } from "@mui/material";
 
 const Home = () => {
   const [searchData, setSearchData] = useState({
@@ -14,12 +15,13 @@ const Home = () => {
     firmaId: "",
   });
 
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const { response, axiosFetch, setResponse, resStatus, error } = useAxios();
+  const [openHomeSnack, setOpenHomeSnack] = useState(false);
 
   const fetchData = useCallback((aramatext, aramatype) => {
     axiosFetch({
       method: "GET",
-      url: "/isletmeara/by" + aramatype + "/" + aramatext,
+      url: "/isletmeara/" + aramatype + "/" + aramatext,
     });
   }, []);
 
@@ -28,10 +30,13 @@ const Home = () => {
       const { unvan, vergiNo, firmaId } = searchData;
       if (unvan !== "") {
         fetchData(unvan, "unvan");
+        setOpenHomeSnack(true);
       } else if (vergiNo !== "") {
         fetchData(vergiNo, "vergino");
+        setOpenHomeSnack(true);
       } else if (firmaId !== "") {
         fetchData(firmaId, "id");
+        setOpenHomeSnack(true);
       } else {
         setResponse([]);
       }
@@ -40,10 +45,34 @@ const Home = () => {
     return () => clearTimeout(timeoutId);
   }, [searchData]);
 
+  const handleHomeClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenHomeSnack(false);
+  };
+
   return (
     <PageWrapper>
+      {response["message"] && (
+        <Snackbar
+          open={openHomeSnack}
+          autoHideDuration={2000}
+          onClose={handleHomeClose}
+        >
+          <Alert
+            severity={resStatus == 200 ? "success" : "error"}
+            variant="filled"
+            sx={{ width: "100%" }}
+            onClose={handleHomeClose}
+          >
+            {response.message}
+            {error}
+          </Alert>
+        </Snackbar>
+      )}
       <Grid container alignItems={"center"} justifyContent={"center"}>
-        {response.length !== 0 ? (
+        {response["id"] ? (
           <Fragment>
             <Grid xs={12}>
               <HomeSearchBar

@@ -12,7 +12,7 @@ export const IsletmeForm = ({
   submitHandler,
   buttonName = "EKLE",
 }) => {
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const { response, loading, axiosFetch } = useAxios();
 
   const fetchSektorData = useCallback(() => {
     axiosFetch({
@@ -28,7 +28,7 @@ export const IsletmeForm = ({
   const validateSchema = Yup.object().shape({
     unvan: Yup.string().required("Gerekli").min(2, "En az 5 Karakter"),
     sistemId: Yup.string().required("Boş Olamaz"),
-    vergiNo: Yup.string().required("Boş Olamaz"),
+    vergiNo: Yup.string().required("Boş Olamaz").min(10, "En az 10 Karakter"),
     naceKodu: Yup.string().required("Boş Olamaz"),
     adres: Yup.string().required("Boş Olamaz"),
     mail: Yup.string().required("Boş Olamaz"),

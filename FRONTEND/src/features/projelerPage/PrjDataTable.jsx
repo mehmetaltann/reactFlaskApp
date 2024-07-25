@@ -34,7 +34,7 @@ const useFakeMutation = () => {
 };
 
 const PrjDataTable = ({ projeDurum }) => {
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const { response, axiosFetch, resStatus, error } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
   const mutateRow = useFakeMutation();
 
@@ -194,16 +194,23 @@ const PrjDataTable = ({ projeDurum }) => {
 
   return (
     <div style={{ height: "100%", width: "100%" }}>
-      <Snackbar open={openSnack} autoHideDuration={1000} onClose={handleClose}>
-        <Alert
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
+      {response["message"] && (
+        <Snackbar
+          open={openSnack}
+          autoHideDuration={1000}
           onClose={handleClose}
         >
-          {response.message}
-        </Alert>
-      </Snackbar>
+          <Alert
+            severity={resStatus == 200 ? "success" : "error"}
+            variant="filled"
+            sx={{ width: "100%" }}
+            onClose={handleClose}
+          >
+            {response.message}
+            {error}
+          </Alert>
+        </Snackbar>
+      )}
       <DataTableFrame
         getRowHeight={() => "auto"}
         getEstimatedRowHeight={() => 100}

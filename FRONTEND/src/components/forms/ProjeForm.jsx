@@ -14,7 +14,7 @@ const ProjeForm = ({
   updateForm = 0,
   buttonName = "EKLE",
 }) => {
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const { response, loading, axiosFetch } = useAxios();
 
   const fetchProgramData = useCallback(() => {
     axiosFetch({

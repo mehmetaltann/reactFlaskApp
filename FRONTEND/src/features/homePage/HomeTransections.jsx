@@ -14,7 +14,7 @@ const HomeTransections = ({ isletme, setSearchData }) => {
   const [openAddProjeModal, setOpenAddProjeModal] = useState(false);
   const [openAddOdemeModal, setOpenAddOdemeModal] = useState(false);
   const [openSnack, setOpenSnack] = useState(false);
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const { response, axiosFetch, resStatus, error } = useAxios();
 
   const isletmeInitialValues = {
     unvan: isletme.unvan,
@@ -42,7 +42,7 @@ const HomeTransections = ({ isletme, setSearchData }) => {
     setOpenUpdateIsletmeModal(false);
     setSearchData((prevFormData) => ({
       ...prevFormData,
-      id: isletme.id,
+      vergiNo: isletme.vergiNo,
     }));
     setOpenSnack(true);
   };
@@ -118,20 +118,23 @@ const HomeTransections = ({ isletme, setSearchData }) => {
     <Fragment>
       {isletme && (
         <Card sx={{ mt: 1, p: 1 }}>
-          <Snackbar
-            open={openSnack}
-            autoHideDuration={2000}
-            onClose={handleClose}
-          >
-            <Alert
-              severity="success"
-              variant="filled"
-              sx={{ width: "100%" }}
+          {response["message"] && (
+            <Snackbar
+              open={openSnack}
+              autoHideDuration={2000}
               onClose={handleClose}
             >
-              {response.message}
-            </Alert>
-          </Snackbar>
+              <Alert
+                severity={resStatus == 200 ? "success" : "error"}
+                variant="filled"
+                sx={{ width: "100%" }}
+                onClose={handleClose}
+              >
+                {response.message}
+                {error}
+              </Alert>
+            </Snackbar>
+          )}
           <Stack
             direction={{ sm: "row" }}
             justifyContent={"space-around"}

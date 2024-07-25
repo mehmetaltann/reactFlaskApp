@@ -22,7 +22,7 @@ import {
 import { Form, Formik } from "formik";
 
 const Programlar = () => {
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const { response, loading, axiosFetch } = useAxios();
 
   const fetchProgramData = useCallback(() => {
     axiosFetch({
@@ -34,7 +34,6 @@ const Programlar = () => {
   useEffect(() => {
     fetchProgramData();
   }, []);
-
 
   const submitHandler = async (values, { resetForm }) => {
     let programId = "id" + Math.random().toString(20).slice(2);
@@ -101,34 +100,36 @@ const Programlar = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {response && !loading && response.map(({ id, isim }, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {index + 1}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      {isim}
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={async () => {
-                          await axiosFetch({
-                            method: "DELETE",
-                            url: "/programdatasil/" + id,
-                          });
-                          fetchProgramData();
-                        }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {response &&
+                  !loading &&
+                  response.map(({ id, isim }, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {index + 1}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        {isim}
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={async () => {
+                            await axiosFetch({
+                              method: "DELETE",
+                              url: "/programdatasil/" + id,
+                            });
+                            fetchProgramData();
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>

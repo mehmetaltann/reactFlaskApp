@@ -1,9 +1,0 @@
-[{
-   $lookup:
-     {
-       from: "proje",
-       localField: "id",
-       foreignField: "projeId",
-       as: "odemeler"
-     }
-}]

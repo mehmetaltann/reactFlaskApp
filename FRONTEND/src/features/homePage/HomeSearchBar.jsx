@@ -18,7 +18,7 @@ import {
 
 const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
   const [openAddIsletmeModal, setOpenAddIsletmeModal] = useState(false);
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const { response, axiosFetch, resStatus, error } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
 
   const handleInputsChange = (e) => {
@@ -54,10 +54,11 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
       },
     });
     setOpenAddIsletmeModal(false);
-    setSearchData((prevFormData) => ({
-      ...prevFormData,
+    setSearchData({
+      unvan: "",
       vergiNo: values.vergiNo,
-    }));
+      firmaId: "",
+    });
     setOpenSnack(true);
   };
 
@@ -70,16 +71,23 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
 
   return (
     <Card>
-      <Snackbar open={openSnack} autoHideDuration={2000} onClose={handleClose}>
-        <Alert
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
+      {response["message"] && (
+        <Snackbar
+          open={openSnack}
+          autoHideDuration={2000}
           onClose={handleClose}
         >
-          {response.message}
-        </Alert>
-      </Snackbar>
+          <Alert
+            severity={resStatus == 200 ? "success" : "error"}
+            variant="filled"
+            sx={{ width: "100%" }}
+            onClose={handleClose}
+          >
+            {response.message}
+            {error}
+          </Alert>
+        </Snackbar>
+      )}
       <Stack
         sx={{ p: 1 }}
         alignItems={{ md: "center" }}
@@ -154,12 +162,13 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
                   onClick={() => {
                     const isletmeId = isletme.id;
                     axiosFetch({
-                      method: "DELETE",
+                      method: "GET",
                       url: "/isletmesil/" + isletmeId,
                     });
                     setSearchData((prevFormData) => ({
-                      ...prevFormData,
-                      id: isletmeId,
+                      unvan: "",
+                      vergiNo: "",
+                      firmaId: "",
                     }));
                     setOpenSnack(true);
                   }}

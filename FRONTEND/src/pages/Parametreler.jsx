@@ -7,11 +7,7 @@ import { Card } from "@mui/material";
 const Parametreler = () => {
   return (
     <PageWrapper>
-      <Grid
-        container
-        
-        spacing={2}
-      >
+      <Grid container spacing={2}>
         <Grid xs={12} md={6} sx={{ p: 2 }}>
           <Programlar />
         </Grid>

@@ -13,8 +13,7 @@ import {
 
 const HomeTableSection = ({ isletme, setSearchData }) => {
   return (
-    <Fragment>
-     
+    <Fragment>     
       {isletme && isletme.projeler.length !== 0 && (
         <Card sx={{ p: 1, mt: 1 }}>
           <TableContainer component={Paper}>

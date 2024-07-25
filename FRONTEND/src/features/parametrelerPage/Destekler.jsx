@@ -21,7 +21,7 @@ import {
 import { Form, Formik } from "formik";
 
 const Destekler = () => {
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const { response, loading, axiosFetch } = useAxios();
 
   const fetchDestekData = useCallback(() => {
     axiosFetch({

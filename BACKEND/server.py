@@ -19,23 +19,28 @@ app.config["CORS_HEADERS"] = "Content-Type"
 # Queries
 ###################################
 
+
 @app.route("/isletmeara/<aramatype>/<aramatext>", methods=["GET", "POST"])
 def findIsletme(aramatype, aramatext):
 
-    if aramatype == "byunvan":
+    if aramatype == "unvan":
         pattern = re.compile(f"^{aramatext}", re.IGNORECASE)
         isletmeler = db.find({"unvan": pattern}, {"_id": 0})
-        if not isletmeler:
-            return jsonify(message="Böyle bir işletme bulunmuyor"), 401
-        isletme = isletmeler[0]
-    elif aramatype == "byvergino":
+        emptyList = []
+        for i in isletmeler:
+            emptyList.append(i)
+        if not emptyList:
+            return jsonify(message="Böyle bir işletme bulunmuyor"), 201
+        else:
+            isletme = emptyList[0]
+    elif aramatype == "vergino":
         isletme = db.find_one({"vergiNo": aramatext}, {"_id": 0})
         if not isletme:
-            return jsonify(message="Böyle bir işletme bulunmuyor"), 401
-    elif aramatype == "byid":
+            return jsonify(message="Böyle bir işletme bulunmuyor"), 201
+    elif aramatype == "id":
         isletme = db.find_one({"id": int(aramatext)}, {"_id": 0})
         if not isletme:
-            return jsonify(message="Böyle bir işletme bulunmuyor"), 401
+            return jsonify(message="Böyle bir işletme bulunmuyor"), 201
     if isletme["projeler"]:
         for proje in isletme["projeler"]:
             if proje['_id']:
@@ -68,7 +73,7 @@ def getIsletmeler():
     emptyList = []
     for isletme in isletmeler:
         emptyList.append(isletme)
-    return jsonify(emptyList)
+    return jsonify(emptyList), 200
 
 
 @app.route("/projeler/<durum>/", methods=["GET"])
@@ -145,7 +150,7 @@ def getProjeler(durum):
         )
         for proje in projeler:
             emptyList.append(proje)
-    return jsonify(emptyList)
+    return jsonify(emptyList), 200
 
 
 @app.route("/odemeler/<durum>/", methods=["GET"])
@@ -200,7 +205,7 @@ def getOdemeler(durum):
     )
     for odeme in odemeler:
         emptyList.append(odeme)
-    return jsonify(emptyList)
+    return jsonify(emptyList), 200
 
 
 @app.route("/sektordata", methods=["GET"])
@@ -209,7 +214,7 @@ def getSektors():
     emptyList = []
     for sektorData in allSektorData:
         emptyList.append(sektorData)
-    return jsonify(emptyList)
+    return jsonify(emptyList), 200
 
 
 @app.route("/programdata", methods=["GET"])
@@ -218,7 +223,7 @@ def getPrograms():
     emptyList = []
     for sektorData in allSektorData:
         emptyList.append(sektorData)
-    return jsonify(emptyList)
+    return jsonify(emptyList), 200
 
 
 @app.route("/destekdata", methods=["GET"])
@@ -227,7 +232,7 @@ def getDesteks():
     emptyList = []
     for sektorData in allSektorData:
         emptyList.append(sektorData)
-    return jsonify(emptyList)
+    return jsonify(emptyList),200
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -247,8 +252,20 @@ def findUser():
 def addIsletme():
     postDataDict = request.get_json()
     newIsletme = postDataDict["data"]
-    db.insert_one(newIsletme)
-    return jsonify(message="İşletme Eklendi"), 200
+    isletme = db.find_one({
+        "$or": [{
+            "unvan": newIsletme["unvan"]
+        }, {
+            "vergiNo": newIsletme["vergiNo"]
+        }, {
+            "sistemId": newIsletme["sistemId"]
+        }]
+    }, {"_id": 0})
+    if isletme:
+        return jsonify(message="Bu İşletme Zaten Kayıtlıdır"), 201
+    else:
+        db.insert_one(newIsletme)
+        return jsonify(message="İşletme Eklendi"), 200
 
 
 @app.route("/projeekle", methods=["GET", "POST"])
@@ -301,7 +318,7 @@ def addUser():
 def deleteIsletme(isletmeId):
     res = db.find_one({'id': isletmeId}, {"_id": 0})
     if res["projeler"]:
-        return jsonify(message="Bu İşletme Silinemez"), 200
+        return jsonify(message="Bu İşletme Silinemez"), 201
     else:
         db.delete_one({'id': isletmeId})
     return jsonify(message="İşletme Silindi"), 200
@@ -320,7 +337,6 @@ def deleteProje(isletmeId, projeId):
 def deleteOdeme(isletmeId, projeId, odemeId):
     db.update_one({"id": isletmeId, "projeler.id": projeId}, {
                   "$pull": {"projeler.$.odemeler": {"id": odemeId}}})
-
     return jsonify(message="Ödeme Silindi"), 200
 
 

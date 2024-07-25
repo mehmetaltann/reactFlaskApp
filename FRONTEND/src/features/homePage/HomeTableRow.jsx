@@ -83,7 +83,7 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
   const [openEditProjeModal, setOpenEditProjeModal] = useState(false);
   const [initalOdemeData, setInitalOdemeData] = useState();
   const [openEditOdemeModal, setOpenEditOdemeModal] = useState(false);
-  const [response, error, loading, axiosFetch, setResponse] = useAxios();
+  const {response, axiosFetch, resStatus,error} = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
 
   const totalPayment = odemeler
@@ -150,17 +150,23 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
 
   return (
     <Fragment>
-      <Snackbar open={openSnack} autoHideDuration={2000} onClose={handleClose}>
-        <Alert
-          severity="success"
-          variant="filled"
-          sx={{ width: "100%" }}
+      {response["message"] && (
+        <Snackbar
+          open={openSnack}
+          autoHideDuration={2000}
           onClose={handleClose}
         >
-          {response.message}
-        </Alert>
-      </Snackbar>
-
+          <Alert
+            severity={resStatus == 200 ? "success" : "error"}
+            variant="filled"
+            sx={{ width: "100%" }}
+            onClose={handleClose}
+          >
+            {response.message}
+            {error}
+          </Alert>
+        </Snackbar>
+      )}
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell align="left" width="1%">
           <IconButton
