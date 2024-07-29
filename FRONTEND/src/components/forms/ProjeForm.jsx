@@ -21,11 +21,11 @@ const ProjeForm = ({
       method: "GET",
       url: "/programdata",
     });
-  }, [axiosFetch]);
+  }, []);
 
   useEffect(() => {
     fetchProgramData();
-  }, [fetchProgramData]);
+  }, []);
 
   const validateSchema = Yup.object().shape({
     sure: Yup.string().required("Boş Olamaz"),

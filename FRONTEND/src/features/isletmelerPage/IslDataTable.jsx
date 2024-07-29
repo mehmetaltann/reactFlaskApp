@@ -15,11 +15,11 @@ const IslDataTable = () => {
       method: "GET",
       url: "/isletmeler",
     });
-  }, [axiosFetch]);
+  }, []);
 
   useEffect(() => {
     fetchIsletmeData();
-  }, [fetchIsletmeData]);
+  }, []);
 
   const columns = [
     stringColumn("unvan", "Unvan", 500),

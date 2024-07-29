@@ -4,6 +4,19 @@ import InfoBox from "../../components/homePageComp/InfoBox";
 import Grid from "@mui/material/Unstable_Grid2";
 
 const HomeInfoSection = ({ isletme }) => {
+  let emptyOdemeArray = [];
+
+  for (const proje of isletme.projeler) {
+    for (const odeme of proje.odemeler) {
+      emptyOdemeArray.push(odeme);
+    }
+  }
+  const totalPayment = emptyOdemeArray
+    .reduce((n, { tutar }) => n + tutar, 0)
+    .toFixed(2);
+
+  console.log(totalPayment);
+
   return (
     <Fragment>
       {isletme && (
@@ -44,7 +57,6 @@ const HomeInfoSection = ({ isletme }) => {
                       Telefon :
                     </Typography>
                     <InfoBox data={isletme.tel1} />
-
                     <Divider orientation="vertical" />
                     <InfoBox data={isletme.tel2} />
                   </Stack>
@@ -55,6 +67,11 @@ const HomeInfoSection = ({ isletme }) => {
                   <InfoBox data={isletme.adres} title="Adres :" />
                   <InfoBox data={isletme.uets} title="UETS :" />
                 </Stack>
+                <InfoBox
+                  data={totalPayment}
+                  para="true"
+                  title="Toplam Ödeme :"
+                />
               </Grid>
             </Grid>
           </Grid>

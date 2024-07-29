@@ -24,11 +24,11 @@ const OdemeForm = ({
       method: "GET",
       url: "/destekdata",
     });
-  }, [axiosFetch]);
+  }, []);
 
   useEffect(() => {
     fetchDestekData();
-  }, [fetchDestekData]);
+  }, []);
 
   const validateSchema = Yup.object().shape({
     karekod: Yup.string().required("Boş Olamaz"),

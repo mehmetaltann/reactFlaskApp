@@ -44,11 +44,11 @@ const PrjDataTable = ({ projeDurum }) => {
       method: "GET",
       url: "/projeler/" + projeDurum,
     });
-  }, [projeDurum, axiosFetch]);
+  }, [projeDurum]);
 
   useEffect(() => {
     fetchProjeData();
-  }, [projeDurum, fetchProjeData]);
+  }, [projeDurum]);
 
   const processRowUpdate = useCallback(
     async (newRow) => {

@@ -44,11 +44,11 @@ const OdmDataTable = ({ odemeDurum }) => {
       method: "GET",
       url: "/odemeler/" + odemeDurum,
     });
-  }, [axiosFetch, odemeDurum]);
+  }, [odemeDurum]);
 
   useEffect(() => {
     fetchOdemeData();
-  }, [odemeDurum, fetchOdemeData]);
+  }, [odemeDurum]);
 
   const processRowUpdate = useCallback(
     async (newRow) => {

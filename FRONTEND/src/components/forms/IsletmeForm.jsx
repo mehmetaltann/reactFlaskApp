@@ -19,11 +19,11 @@ export const IsletmeForm = ({
       method: "GET",
       url: "/sektordata",
     });
-  }, [axiosFetch]);
+  }, []);
 
   useEffect(() => {
     fetchSektorData();
-  }, [fetchSektorData]);
+  }, []);
 
   const validateSchema = Yup.object().shape({
     unvan: Yup.string().required("Gerekli").min(2, "En az 5 Karakter"),

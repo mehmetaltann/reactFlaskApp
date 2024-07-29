@@ -1,7 +1,7 @@
 import { Typography, Stack } from "@mui/material";
 import { Fragment, memo } from "react";
 
-const InfoBox = ({ data, title }) => {
+const InfoBox = ({ data, title, para = "para" }) => {
   return (
     <Fragment>
       <Stack direction="row" spacing={1} alignItems={"center"}>
@@ -11,9 +11,19 @@ const InfoBox = ({ data, title }) => {
         >
           {title}
         </Typography>
-        <Typography sx={{ color: "primary.main" }} variant="span">
-          {data ? data : ""}
-        </Typography>
+        {para === "para" ? (
+          <Typography sx={{ color: "primary.main" }} variant="span">
+            {data ? data : ""}
+          </Typography>
+        ) : (
+          <Typography sx={{ color: "primary.main" }} variant="span">
+            {data
+              ? `${new Intl.NumberFormat("tr-TR", {
+                  minimumFractionDigits: 2,
+                }).format(data)} TL`
+              : ""}
+          </Typography>
+        )}
       </Stack>
     </Fragment>
   );

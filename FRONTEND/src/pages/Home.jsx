@@ -25,7 +25,7 @@ const Home = () => {
         url: "/isletmeara/" + aramatype + "/" + aramatext,
       });
     },
-    [axiosFetch]
+    []
   );
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const Home = () => {
     }, 600);
 
     return () => clearTimeout(timeoutId);
-  }, [searchData, fetchData]);
+  }, [searchData]);
 
   return (
     <PageWrapper>
