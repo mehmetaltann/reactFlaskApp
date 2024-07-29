@@ -48,7 +48,7 @@ const PrjDataTable = ({ projeDurum }) => {
 
   useEffect(() => {
     fetchProjeData();
-  }, [projeDurum]);
+  }, [projeDurum, fetchProjeData]);
 
   const processRowUpdate = useCallback(
     async (newRow) => {

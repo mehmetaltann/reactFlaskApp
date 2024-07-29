@@ -19,7 +19,7 @@ const IslDataTable = () => {
 
   useEffect(() => {
     fetchIsletmeData();
-  }, []);
+  }, [fetchIsletmeData]);
 
   const columns = [
     stringColumn("unvan", "Unvan", 500),

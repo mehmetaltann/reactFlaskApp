@@ -4,7 +4,7 @@ import pymongo
 import re
 
 myClient = pymongo.MongoClient(
-    "mongodb+srv://mehmetaltann:BfAyFdceTZIKOvPJ@training.xsqqies.mongodb.net/?appName=TRAINING",connectTimeoutMS=30000, socketTimeoutMS=None, connect=False, maxPoolsize=1)
+    "mongodb+srv://mehmetaltann:***********@training.xsqqies.mongodb.net/?retryWrites=true&w=majority&appName=TRAINING")
 maindb = myClient["altan"]
 db = maindb["isletmeler"]
 dbSektor = maindb["sektorler"]

@@ -28,11 +28,11 @@ const Destekler = () => {
       method: "GET",
       url: "/destekdata",
     });
-  }, []);
+  }, [axiosFetch]);
 
   useEffect(() => {
     fetchDestekData();
-  }, []);
+  }, [fetchDestekData]);
 
   const submitHandler = async (values, { resetForm }) => {
     let destekId = "id" + Math.random().toString(20).slice(2);

@@ -32,7 +32,7 @@ const Programlar = () => {
 
   useEffect(() => {
     fetchProgramData();
-  }, []);
+  }, [fetchProgramData]);
 
   const submitHandler = async (values, { resetForm }) => {
     let programId = "id" + Math.random().toString(20).slice(2);
