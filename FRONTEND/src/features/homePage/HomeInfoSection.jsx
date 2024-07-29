@@ -14,9 +14,7 @@ const HomeInfoSection = ({ isletme }) => {
   const totalPayment = emptyOdemeArray
     .reduce((n, { tutar }) => n + tutar, 0)
     .toFixed(2);
-
-  console.log(totalPayment);
-
+    
   return (
     <Fragment>
       {isletme && (
