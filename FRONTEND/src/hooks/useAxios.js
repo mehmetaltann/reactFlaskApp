@@ -4,6 +4,7 @@ import axios from "axios";
 const useAxios = () => {
   const [response, setResponse] = useState([]);
   const [error, setError] = useState("");
+  const [resMessage, setResMessage] = useState("");
   const [resStatus, setResStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [controller, setController] = useState();
@@ -26,7 +27,11 @@ const useAxios = () => {
           ...requestConfig,
           signal: ctrl.signal,
         });
-      setResponse(res.data);
+      if (method === "GET") {
+        setResponse(res.data);
+      } else {
+        setResMessage(res.data.message);
+      }
       setResStatus(res.status);
     } catch (err) {
       setError(err.message);
@@ -39,7 +44,15 @@ const useAxios = () => {
     return () => controller && controller.abort();
   }, [controller]);
 
-  return { response, error, loading, axiosFetch, setResponse, resStatus };
+  return {
+    response,
+    error,
+    loading,
+    axiosFetch,
+    setResponse,
+    resStatus,
+    resMessage,
+  };
 };
 
 export default useAxios;

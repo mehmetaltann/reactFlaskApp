@@ -27,7 +27,7 @@ const UserLogin = () => {
       },
     });
 
-    if (response == "var") {
+    if (response === "var") {
       localStorage.setItem("token", "ad");
       window.location = "/";
     }

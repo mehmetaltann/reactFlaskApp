@@ -1,9 +1,10 @@
 import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../hooks/useAxios";
+import InfoBox from "../../components/ui/InfoBox";
 import { dateFormatNormal } from "../../utils/time-functions";
 import { useCallback, useEffect, useState } from "react";
-import { IconButton, Typography, Snackbar, Alert } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import {
   stringColumn,
   actionColumn,
@@ -34,7 +35,7 @@ const useFakeMutation = () => {
 };
 
 const PrjDataTable = ({ projeDurum }) => {
-  const { response, axiosFetch, resStatus, error } = useAxios();
+  const { response, axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
   const mutateRow = useFakeMutation();
 
@@ -67,8 +68,11 @@ const PrjDataTable = ({ projeDurum }) => {
           data: newRecord,
         },
       });
+      await axiosFetch({
+        method: "GET",
+        url: "/projeler/" + newRecord.durum,
+      });
       setOpenSnack(true);
-      fetchProjeData();
       const res = await mutateRow(newRow);
       return res;
     },
@@ -172,8 +176,11 @@ const PrjDataTable = ({ projeDurum }) => {
                   url:
                     "/projesil/" + params.row.isletmeId + "/" + params.row.id,
                 });
+                await axiosFetch({
+                  method: "GET",
+                  url: "/projeler/" + params.row.durum,
+                });
                 setOpenSnack(true);
-                fetchProjeData();
               }}
             >
               <DeleteIcon />
@@ -184,32 +191,16 @@ const PrjDataTable = ({ projeDurum }) => {
     }),
   ];
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpenSnack(false);
-  };
-
   return (
     <div style={{ height: "100%", width: "100%" }}>
-      {response["message"] && (
-        <Snackbar
-          open={openSnack}
-          autoHideDuration={1000}
-          onClose={handleClose}
-        >
-          <Alert
-            severity={resStatus === 200 ? "success" : "error"}
-            variant="filled"
-            sx={{ width: "100%" }}
-            onClose={handleClose}
-          >
-            {response.message}
-            {error}
-          </Alert>
-        </Snackbar>
+      {resMessage && (
+        <InfoBox
+          resMessage={resMessage}
+          error={error}
+          resStatus={resStatus}
+          setOpenSnack={setOpenSnack}
+          openSnack={openSnack}
+        />
       )}
       <DataTableFrame
         getRowHeight={() => "auto"}

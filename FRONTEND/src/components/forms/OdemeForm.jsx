@@ -45,7 +45,7 @@ const OdemeForm = ({
       {({ values }) => (
         <Form>
           <Stack spacing={2} sx={{ pl: 1 }}>
-            {updateForm == 0 && (
+            {updateForm === 0 && (
               <Fragment>
                 <Field name="projeId" component={FormSelect} label="Program">
                   {isletme.projeler?.map(
@@ -89,7 +89,7 @@ const OdemeForm = ({
                 type="number"
               />
             </Stack>
-            {updateForm == 1 && (
+            {updateForm === 1 && (
               <Field name="durum" component={FormSelect} label="Durum">
                 <MenuItem value="BEKLEMEDE">BEKLEMEDE</MenuItem>
                 <MenuItem value="ÖDENDİ">ÖDENDİ</MenuItem>

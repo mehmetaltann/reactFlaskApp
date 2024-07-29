@@ -35,7 +35,7 @@ const OdmTableContainer = () => {
         />
       </Stack>
       <DataTableWrapper tableHeight={"78vh"} sxProps={{ p: { xs: 1, md: 2 } }}>
-        <OdmDataTable odemeDurum={odemeDurum} />
+        <OdmDataTable odemeDurum={odemeDurum}/>
       </DataTableWrapper>
     </Paper>
   );

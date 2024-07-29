@@ -4,9 +4,9 @@ import HomeInfoSection from "../features/homePage/HomeInfoSection";
 import HomeTableSection from "../features/homePage/HomeTableSection";
 import HomeTransections from "../features/homePage/HomeTransections";
 import useAxios from "../hooks/useAxios";
+import InfoBox from "../components/ui/InfoBox";
 import { PageWrapper } from "../layouts/Wrappers";
 import { useState, useEffect, Fragment, useCallback } from "react";
-import { Snackbar, Alert } from "@mui/material";
 
 const Home = () => {
   const [searchData, setSearchData] = useState({
@@ -16,60 +16,48 @@ const Home = () => {
   });
 
   const { response, axiosFetch, setResponse, resStatus, error } = useAxios();
-  const [openHomeSnack, setOpenHomeSnack] = useState(false);
+  const [openSnack, setOpenSnack] = useState(false);
 
-  const fetchData = useCallback((aramatext, aramatype) => {
-    axiosFetch({
-      method: "GET",
-      url: "/isletmeara/" + aramatype + "/" + aramatext,
-    });
-  }, []);
+  const fetchData = useCallback(
+    (aramatext, aramatype) => {
+      axiosFetch({
+        method: "GET",
+        url: "/isletmeara/" + aramatype + "/" + aramatext,
+      });
+    },
+    [axiosFetch]
+  );
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const { unvan, vergiNo, firmaId } = searchData;
       if (unvan !== "") {
         fetchData(unvan, "unvan");
-        setOpenHomeSnack(true);
+        setOpenSnack(true);
       } else if (vergiNo !== "") {
         fetchData(vergiNo, "vergino");
-        setOpenHomeSnack(true);
+        setOpenSnack(true);
       } else if (firmaId !== "") {
         fetchData(firmaId, "id");
-        setOpenHomeSnack(true);
+        setOpenSnack(true);
       } else {
         setResponse([]);
       }
     }, 600);
 
     return () => clearTimeout(timeoutId);
-  }, [searchData]);
-
-  const handleHomeClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenHomeSnack(false);
-  };
+  }, [searchData, fetchData]);
 
   return (
     <PageWrapper>
       {response["message"] && (
-        <Snackbar
-          open={openHomeSnack}
-          autoHideDuration={2000}
-          onClose={handleHomeClose}
-        >
-          <Alert
-            severity={resStatus == 200 ? "success" : "error"}
-            variant="filled"
-            sx={{ width: "100%" }}
-            onClose={handleHomeClose}
-          >
-            {response.message}
-            {error}
-          </Alert>
-        </Snackbar>
+        <InfoBox
+          resMessage={response["message"]}
+          error={error}
+          resStatus={resStatus}
+          setOpenSnack={setOpenSnack}
+          openSnack={openSnack}
+        />
       )}
       <Grid container alignItems={"center"} justifyContent={"center"}>
         {response["id"] ? (

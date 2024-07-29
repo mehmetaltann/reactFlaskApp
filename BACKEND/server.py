@@ -4,7 +4,7 @@ import pymongo
 import re
 
 myClient = pymongo.MongoClient(
-    "mongodb+srv://mehmetaltann:BfAyFdceTZIKOvPJ@training.xsqqies.mongodb.net/?retryWrites=true&w=majority&appName=TRAINING")
+    "mongodb+srv://mehmetaltann:BfAyFdceTZIKOvPJ@training.xsqqies.mongodb.net/?appName=TRAINING",connectTimeoutMS=30000, socketTimeoutMS=None, connect=False, maxPoolsize=1)
 maindb = myClient["altan"]
 db = maindb["isletmeler"]
 dbSektor = maindb["sektorler"]
@@ -18,7 +18,9 @@ app.config["CORS_HEADERS"] = "Content-Type"
 
 # Queries
 ###################################
-
+@app.route("/", methods=["GET", "POST"])
+def index():
+    return "X"
 
 @app.route("/isletmeara/<aramatype>/<aramatext>", methods=["GET", "POST"])
 def findIsletme(aramatype, aramatext):
@@ -38,7 +40,7 @@ def findIsletme(aramatype, aramatext):
         if not isletme:
             return jsonify(message="Böyle bir işletme bulunmuyor"), 201
     elif aramatype == "id":
-        isletme = db.find_one({"id": int(aramatext)}, {"_id": 0})
+        isletme = db.find_one({"id": aramatext}, {"_id": 0})
         if not isletme:
             return jsonify(message="Böyle bir işletme bulunmuyor"), 201
     if isletme["projeler"]:

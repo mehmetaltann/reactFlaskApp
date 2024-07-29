@@ -17,7 +17,7 @@ const ModalIconButton = ({
     top: "40%",
     left: "50%",
     height: height,
-    width: { sm: "55%", xs: "85%", lg: "30%" },
+    width: { sm: "70%", xs: "85%", md: "50%", lg: "45%", xl: "45%" },
     overflow: "auto",
     transform: "translate(-50%, -50%)",
     bgcolor: "background.paper",

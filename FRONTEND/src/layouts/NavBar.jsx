@@ -36,7 +36,7 @@ const NavBar = () => {
             sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
           />
           <Typography
-            variant="h5"
+            variant="h6"
             noWrap
             component="a"
             href="/"
@@ -103,7 +103,7 @@ const NavBar = () => {
             sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
           />
           <Typography
-            variant="h5"
+            variant="h6"
             noWrap
             component="a"
             href=""

@@ -1,12 +1,13 @@
 import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../hooks/useAxios";
+import InfoBox from "../../components/ui/InfoBox";
 import { useCallback, useEffect, useState } from "react";
-import { IconButton, Snackbar, Alert } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { stringColumn, actionColumn } from "../../components/tables/columns";
 
 const IslDataTable = () => {
-  const { response, axiosFetch, resStatus, error } = useAxios();
+  const { response, axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
 
   const fetchIsletmeData = useCallback(async () => {
@@ -55,32 +56,16 @@ const IslDataTable = () => {
     }),
   ];
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpenSnack(false);
-  };
-
   return (
     <div style={{ height: "100%", width: "100%" }}>
-      {response["message"] && (
-        <Snackbar
-          open={openSnack}
-          autoHideDuration={1000}
-          onClose={handleClose}
-        >
-          <Alert
-            severity={resStatus === 200 ? "success" : "error"}
-            variant="filled"
-            sx={{ width: "100%" }}
-            onClose={handleClose}
-          >
-            {response.message}
-            {error}
-          </Alert>
-        </Snackbar>
+      {resMessage && (
+        <InfoBox
+          resMessage={resMessage}
+          error={error}
+          resStatus={resStatus}
+          setOpenSnack={setOpenSnack}
+          openSnack={openSnack}
+        />
       )}
       <DataTableFrame
         getRowHeight={() => "auto"}

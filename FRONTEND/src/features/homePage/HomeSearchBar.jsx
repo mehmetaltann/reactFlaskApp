@@ -1,10 +1,11 @@
-import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
+import InfoBox from "../../components/ui/InfoBox";
 import Grid from "@mui/material/Unstable_Grid2";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModalButton from "../../components/modal/ModalButton";
 import IsletmeForm from "../../components/forms/IsletmeForm";
 import useAxios from "../../hooks/useAxios";
+import { useState } from "react";
 import {
   Card,
   TextField,
@@ -12,20 +13,18 @@ import {
   Box,
   Stack,
   IconButton,
-  Snackbar,
-  Alert,
 } from "@mui/material";
 
 const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
   const [openAddIsletmeModal, setOpenAddIsletmeModal] = useState(false);
-  const { response, axiosFetch, resStatus, error } = useAxios();
+  const { axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
 
   const handleInputsChange = (e) => {
     const { name, value } = e.target;
     setSearchData((prevFormData) => ({
       ...prevFormData,
-      [name]: value.toUpperCase(),
+      [name]: value.toLocaleUpperCase("tr-TR"),
     }));
   };
 
@@ -33,7 +32,7 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
     let isletmeId = "id" + Math.random().toString(20).slice(2);
     const addIsletmeRecord = {
       id: isletmeId,
-      unvan: values.unvan.toUpperCase(),
+      unvan: values.unvan.toLocaleUpperCase("tr-TR"),
       vergiNo: values.vergiNo,
       sistemId: values.sistemId,
       naceKodu: values.naceKodu,
@@ -62,31 +61,16 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
     setOpenSnack(true);
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenSnack(false);
-  };
-
   return (
     <Card>
-      {response["message"] && (
-        <Snackbar
-          open={openSnack}
-          autoHideDuration={2000}
-          onClose={handleClose}
-        >
-          <Alert
-            severity={resStatus === 200 ? "success" : "error"}
-            variant="filled"
-            sx={{ width: "100%" }}
-            onClose={handleClose}
-          >
-            {response.message}
-            {error}
-          </Alert>
-        </Snackbar>
+      {resMessage && (
+        <InfoBox
+          resMessage={resMessage}
+          error={error}
+          resStatus={resStatus}
+          setOpenSnack={setOpenSnack}
+          openSnack={openSnack}
+        />
       )}
       <Stack
         sx={{ p: 1 }}

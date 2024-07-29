@@ -3,18 +3,18 @@ import ModalButton from "../../components/modal/ModalButton";
 import OdemeForm from "../../components/forms/OdemeForm";
 import ProjeForm from "../../components/forms/ProjeForm";
 import IsletmeForm from "../../components/forms/IsletmeForm";
+import InfoBox from "../../components/ui/InfoBox";
 import { Fragment, useState } from "react";
 import { todayDateInput } from "../../utils/time-functions";
 import { Card, Stack } from "@mui/material";
 import { getChangedValues } from "../../utils/helper-functions";
-import { Snackbar, Alert } from "@mui/material";
 
 const HomeTransections = ({ isletme, setSearchData }) => {
   const [openUpdateIsletmeModal, setOpenUpdateIsletmeModal] = useState(false);
   const [openAddProjeModal, setOpenAddProjeModal] = useState(false);
   const [openAddOdemeModal, setOpenAddOdemeModal] = useState(false);
   const [openSnack, setOpenSnack] = useState(false);
-  const { response, axiosFetch, resStatus, error } = useAxios();
+  const { axiosFetch, resStatus, error, resMessage } = useAxios();
 
   const isletmeInitialValues = {
     unvan: isletme.unvan,
@@ -42,7 +42,7 @@ const HomeTransections = ({ isletme, setSearchData }) => {
     setOpenUpdateIsletmeModal(false);
     setSearchData((prevFormData) => ({
       ...prevFormData,
-      vergiNo: isletme.vergiNo,
+      id: isletme.id,
     }));
     setOpenSnack(true);
   };
@@ -106,34 +106,18 @@ const HomeTransections = ({ isletme, setSearchData }) => {
     setOpenSnack(true);
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpenSnack(false);
-  };
-
   return (
     <Fragment>
       {isletme && (
         <Card sx={{ mt: 1, p: 1 }}>
-          {response["message"] && (
-            <Snackbar
-              open={openSnack}
-              autoHideDuration={2000}
-              onClose={handleClose}
-            >
-              <Alert
-                severity={resStatus === 200 ? "success" : "error"}
-                variant="filled"
-                sx={{ width: "100%" }}
-                onClose={handleClose}
-              >
-                {response.message}
-                {error}
-              </Alert>
-            </Snackbar>
+          {resMessage && (
+            <InfoBox
+              resMessage={resMessage}
+              error={error}
+              resStatus={resStatus}
+              setOpenSnack={setOpenSnack}
+              openSnack={openSnack}
+            />
           )}
           <Stack
             direction={{ sm: "row" }}

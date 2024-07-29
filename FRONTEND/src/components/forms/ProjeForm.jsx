@@ -21,11 +21,11 @@ const ProjeForm = ({
       method: "GET",
       url: "/programdata",
     });
-  }, []);
+  }, [axiosFetch]);
 
   useEffect(() => {
     fetchProgramData();
-  }, []);
+  }, [fetchProgramData]);
 
   const validateSchema = Yup.object().shape({
     sure: Yup.string().required("Boş Olamaz"),
@@ -41,7 +41,7 @@ const ProjeForm = ({
       {({ values }) => (
         <Form>
           <Stack spacing={2} sx={{ pl: 1, pt: 1 }}>
-            {updateForm == 0 && !loading && (
+            {updateForm === 0 && !loading && (
               <Field name="program" component={FormSelect} label="Program">
                 {response?.map(({ isim }, index) => (
                   <MenuItem value={isim} key={index}>
@@ -85,7 +85,7 @@ const ProjeForm = ({
                 size="small"
               />
             </Stack>
-            {updateForm == 1 && (
+            {updateForm === 1 && (
               <Field name="durum" component={FormSelect} label="Durum">
                 <MenuItem value="Devam Ediyor">Devam Ediyor</MenuItem>
                 <MenuItem value="Başarıyla Tamamlandı">

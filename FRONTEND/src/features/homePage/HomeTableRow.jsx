@@ -6,6 +6,7 @@ import ProjeForm from "../../components/forms/ProjeForm";
 import OdemeForm from "../../components/forms/OdemeForm";
 import ModalIconButton from "../../components/modal/ModelIconButton";
 import useAxios from "../../hooks/useAxios";
+import InfoBox from "../../components/ui/InfoBox";
 import { getChangedValues } from "../../utils/helper-functions";
 import { dateFormat } from "../../utils/time-functions";
 import { Fragment, useState } from "react";
@@ -18,18 +19,16 @@ import {
   TableRow,
   TableCell,
   Collapse,
-  Snackbar,
-  Alert,
   Divider,
   Modal,
 } from "@mui/material";
 
 const modalStyle = {
   position: "absolute",
-  top: "40%",
+  top: "50%",
   left: "50%",
-  height: "30vh",
-  width: { sm: "55%", xs: "85%", lg: "30%" },
+  height: "35vh",
+  width: { xs: "85%", sm: "65%", md: "60%", lg: "40%", xl: "35%" },
   overflow: "auto",
   transform: "translate(-50%, -50%)",
   bgcolor: "background.paper",
@@ -83,7 +82,7 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
   const [openEditProjeModal, setOpenEditProjeModal] = useState(false);
   const [initalOdemeData, setInitalOdemeData] = useState();
   const [openEditOdemeModal, setOpenEditOdemeModal] = useState(false);
-  const { response, axiosFetch, resStatus, error } = useAxios();
+  const { axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
 
   const totalPayment = odemeler
@@ -141,31 +140,16 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
     setOpenSnack(true);
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenSnack(false);
-  };
-
   return (
     <Fragment>
-      {response["message"] && (
-        <Snackbar
-          open={openSnack}
-          autoHideDuration={2000}
-          onClose={handleClose}
-        >
-          <Alert
-            severity={resStatus === 200 ? "success" : "error"}
-            variant="filled"
-            sx={{ width: "100%" }}
-            onClose={handleClose}
-          >
-            {response.message}
-            {error}
-          </Alert>
-        </Snackbar>
+      {resMessage && (
+        <InfoBox
+          resMessage={resMessage}
+          error={error}
+          resStatus={resStatus}
+          setOpenSnack={setOpenSnack}
+          openSnack={openSnack}
+        />
       )}
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell align="left" width="1%">
@@ -206,7 +190,9 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
           width="10%"
           sx={{ color: "primary.main", fontWeight: 700 }}
         >
-          {`${totalPayment} TL`}
+          {`${new Intl.NumberFormat("tr-TR", {
+            minimumFractionDigits: 2,
+          }).format(totalPayment)} TL`}
         </TableCell>
         <TableCell align="left" width="10%">
           {odemeler.length === 0 && (
@@ -272,7 +258,9 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
                           <TableCell
                             sx={{ color: "primary.main", fontWeight: 500 }}
                             width="10%"
-                          >{`${tutar.toFixed(2)} TL`}</TableCell>
+                          >{`${new Intl.NumberFormat("tr-TR", {
+                            minimumFractionDigits: 2,
+                          }).format(tutar)} TL`}</TableCell>
                           {durum === "ÖDENDİ" && (
                             <TableCell
                               width="10%"

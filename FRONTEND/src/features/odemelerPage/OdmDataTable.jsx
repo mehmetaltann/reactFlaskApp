@@ -1,9 +1,10 @@
 import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../hooks/useAxios";
+import InfoBox from "../../components/ui/InfoBox";
 import { useEffect, useCallback, useState } from "react";
 import { dateFormatNormal } from "../../utils/time-functions";
-import { IconButton, Snackbar, Alert } from "@mui/material";
+import { IconButton } from "@mui/material";
 import {
   stringColumn,
   actionColumn,
@@ -34,7 +35,7 @@ const useFakeMutation = () => {
 };
 
 const OdmDataTable = ({ odemeDurum }) => {
-  const { response, axiosFetch, resStatus, error } = useAxios();
+  const { response, axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
   const mutateRow = useFakeMutation();
 
@@ -147,32 +148,16 @@ const OdmDataTable = ({ odemeDurum }) => {
     }),
   ];
 
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpenSnack(false);
-  };
-
   return (
     <div style={{ height: "100%", width: "100%" }}>
-      {response["message"] && (
-        <Snackbar
-          open={openSnack}
-          autoHideDuration={1000}
-          onClose={handleClose}
-        >
-          <Alert
-            severity={resStatus === 200 ? "success" : "error"}
-            variant="filled"
-            sx={{ width: "100%" }}
-            onClose={handleClose}
-          >
-            {response.message}
-            {error}
-          </Alert>
-        </Snackbar>
+      {resMessage && (
+        <InfoBox
+          resMessage={resMessage}
+          error={error}
+          resStatus={resStatus}
+          setOpenSnack={setOpenSnack}
+          openSnack={openSnack}
+        />
       )}
       <DataTableFrame
         getRowHeight={() => "auto"}
