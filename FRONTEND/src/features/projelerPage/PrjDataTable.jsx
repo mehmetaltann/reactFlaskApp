@@ -2,6 +2,7 @@ import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../hooks/useAxios";
 import InfoBox from "../../components/ui/InfoBox";
+import OnayBox from "../../components/ui/OnayBox";
 import { dateFormatNormal } from "../../utils/time-functions";
 import { useCallback, useEffect, useState } from "react";
 import { IconButton, Typography } from "@mui/material";
@@ -37,6 +38,12 @@ const useFakeMutation = () => {
 const PrjDataTable = ({ projeDurum }) => {
   const { response, axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
+  const [onayBoxInf, setOnayBoxInf] = useState({
+    isOpen: false,
+    content: "",
+    onClickHandler: "",
+    functionData: {},
+  });
   const mutateRow = useFakeMutation();
 
   const fetchProjeData = useCallback(async () => {
@@ -84,13 +91,29 @@ const PrjDataTable = ({ projeDurum }) => {
     response.message = error;
   }, []);
 
+  const projeDeleteHandler = async ({ id, isletmeId, durum }) => {
+    await axiosFetch({
+      method: "POST",
+      url: "/projesil/" + isletmeId + "/" + id,
+    });
+    await axiosFetch({
+      method: "GET",
+      url: "/projeler/" + durum,
+    });
+    setOnayBoxInf((prevFormData) => ({
+      ...prevFormData,
+      isOpen: false,
+    }));
+    setOpenSnack(true);
+  };
+
   const columns = [
-    stringColumn("unvan", "Unvan", 400),
+    stringColumn("unvan", "Unvan", 360),
     stringColumn("vergiNo", "Vergi No", 110, {
       cellClassName: "boldandcolorcell",
       filterable: false,
     }),
-    stringColumn("program", "Proje", 270),
+    stringColumn("program", "Proje", 330),
     dateColumn("baslamaTarihi", "Başlangıç Tarihi", 100, {
       cellClassName: "boldandcolorcell",
       editable: true,
@@ -162,6 +185,9 @@ const PrjDataTable = ({ projeDurum }) => {
     actionColumn({
       align: "center",
       renderCell: (params, index) => {
+        const isletmeId = params.row.isletmeId;
+        const id = params.row.id;
+        const durum = params.row.durum;
         if (params.row.numberOfOdeme) {
           return;
         } else {
@@ -170,17 +196,14 @@ const PrjDataTable = ({ projeDurum }) => {
               key={index}
               size="small"
               color="error"
-              onClick={async () => {
-                await axiosFetch({
-                  method: "POST",
-                  url:
-                    "/projesil/" + params.row.isletmeId + "/" + params.row.id,
-                });
-                await axiosFetch({
-                  method: "GET",
-                  url: "/projeler/" + params.row.durum,
-                });
-                setOpenSnack(true);
+              onClick={() => {
+                setOnayBoxInf((prevFormData) => ({
+                  ...prevFormData,
+                  isOpen: true,
+                  content: "İlgili Proje Silinecek Onaylıyor musunuz ?",
+                  onClickHandler: projeDeleteHandler,
+                  functionData: { id, isletmeId, durum },
+                }));
               }}
             >
               <DeleteIcon />
@@ -201,6 +224,9 @@ const PrjDataTable = ({ projeDurum }) => {
           setOpenSnack={setOpenSnack}
           openSnack={openSnack}
         />
+      )}
+      {onayBoxInf.isOpen && (
+        <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
       )}
       <DataTableFrame
         getRowHeight={() => "auto"}

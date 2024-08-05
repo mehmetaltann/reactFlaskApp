@@ -2,6 +2,7 @@ import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../hooks/useAxios";
 import InfoBox from "../../components/ui/InfoBox";
+import OnayBox from "../../components/ui/OnayBox";
 import { useEffect, useCallback, useState } from "react";
 import { dateFormatNormal } from "../../utils/time-functions";
 import { IconButton } from "@mui/material";
@@ -37,6 +38,12 @@ const useFakeMutation = () => {
 const OdmDataTable = ({ odemeDurum }) => {
   const { response, axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
+  const [onayBoxInf, setOnayBoxInf] = useState({
+    isOpen: false,
+    content: "",
+    onClickHandler: "",
+    functionData: {},
+  });
   const mutateRow = useFakeMutation();
 
   const fetchOdemeData = useCallback(async () => {
@@ -83,6 +90,19 @@ const OdmDataTable = ({ odemeDurum }) => {
     [mutateRow]
   );
 
+  const odemeDeleteHandler = async ({ id, projeId, isletmeId }) => {
+    await axiosFetch({
+      method: "POST",
+      url: "/odemesil/" + isletmeId + "/" + projeId + "/" + id,
+    });
+    setOnayBoxInf((prevFormData) => ({
+      ...prevFormData,
+      isOpen: false,
+    }));
+    setOpenSnack(true);
+    fetchOdemeData();
+  };
+
   const handleProcessRowUpdateError = useCallback((error) => {
     response.message = error;
   }, []);
@@ -121,24 +141,22 @@ const OdmDataTable = ({ odemeDurum }) => {
     actionColumn({
       align: "center",
       renderCell: (params, index) => {
+        const isletmeId = params.row.isletmeId;
+        const projeId = params.row.projeId;
+        const id = params.row.id;
         return (
           <IconButton
             key={index}
             size="small"
             color="error"
             onClick={() => {
-              axiosFetch({
-                method: "POST",
-                url:
-                  "/odemesil/" +
-                  params.row.isletmeId +
-                  "/" +
-                  params.row.projeId +
-                  "/" +
-                  params.row.id,
-              });
-              setOpenSnack(true);
-              fetchOdemeData();
+              setOnayBoxInf((prevFormData) => ({
+                ...prevFormData,
+                isOpen: true,
+                content: "İlgili Ödeme Silinecek Onaylıyor musunuz ?",
+                onClickHandler: odemeDeleteHandler,
+                functionData: { id, projeId, isletmeId },
+              }));
             }}
           >
             <DeleteIcon />
@@ -158,6 +176,9 @@ const OdmDataTable = ({ odemeDurum }) => {
           setOpenSnack={setOpenSnack}
           openSnack={openSnack}
         />
+      )}
+      {onayBoxInf.isOpen && (
+        <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
       )}
       <DataTableFrame
         getRowHeight={() => "auto"}

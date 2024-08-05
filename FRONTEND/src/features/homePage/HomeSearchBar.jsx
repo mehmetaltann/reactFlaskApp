@@ -5,6 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ModalButton from "../../components/modal/ModalButton";
 import IsletmeForm from "../../components/forms/IsletmeForm";
 import useAxios from "../../hooks/useAxios";
+import OnayBox from "../../components/ui/OnayBox";
 import { useState } from "react";
 import {
   Card,
@@ -19,6 +20,12 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
   const [openAddIsletmeModal, setOpenAddIsletmeModal] = useState(false);
   const { axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
+  const [onayBoxInf, setOnayBoxInf] = useState({
+    isOpen: false,
+    content: "",
+    onClickHandler: "",
+    functionData: {},
+  });
 
   const handleInputsChange = (e) => {
     const { name, value } = e.target;
@@ -61,6 +68,23 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
     setOpenSnack(true);
   };
 
+  const isletmeDeleteHandler = async ({ isletmeId }) => {
+    await axiosFetch({
+      method: "GET",
+      url: "/isletmesil/" + isletmeId,
+    });
+    setSearchData((prevFormData) => ({
+      unvan: "",
+      vergiNo: "",
+      firmaId: "",
+    }));
+    setOpenSnack(true);
+    setOnayBoxInf((prevFormData) => ({
+      ...prevFormData,
+      isOpen: false,
+    }));
+  };
+
   return (
     <Card>
       {resMessage && (
@@ -71,6 +95,9 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
           setOpenSnack={setOpenSnack}
           openSnack={openSnack}
         />
+      )}
+      {onayBoxInf.isOpen && (
+        <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
       )}
       <Stack
         sx={{ p: 1 }}
@@ -145,16 +172,13 @@ const HomeSearchBar = ({ searchData, setSearchData, isletme }) => {
                   color="primary"
                   onClick={() => {
                     const isletmeId = isletme.id;
-                    axiosFetch({
-                      method: "GET",
-                      url: "/isletmesil/" + isletmeId,
-                    });
-                    setSearchData((prevFormData) => ({
-                      unvan: "",
-                      vergiNo: "",
-                      firmaId: "",
+                    setOnayBoxInf((prevFormData) => ({
+                      ...prevFormData,
+                      isOpen: true,
+                      content: "İlgili İşletme Silinecek Onaylıyor musunuz ?",
+                      onClickHandler: isletmeDeleteHandler,
+                      functionData: { isletmeId },
                     }));
-                    setOpenSnack(true);
                   }}
                 >
                   <DeleteIcon />

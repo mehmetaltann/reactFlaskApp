@@ -7,6 +7,7 @@ import OdemeForm from "../../components/forms/OdemeForm";
 import ModalIconButton from "../../components/modal/ModelIconButton";
 import useAxios from "../../hooks/useAxios";
 import InfoBox from "../../components/ui/InfoBox";
+import OnayBox from "../../components/ui/OnayBox";
 import { getChangedValues } from "../../utils/helper-functions";
 import { dateFormat } from "../../utils/time-functions";
 import { Fragment, useState } from "react";
@@ -84,6 +85,12 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
   const [openEditOdemeModal, setOpenEditOdemeModal] = useState(false);
   const { axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
+  const [onayBoxInf, setOnayBoxInf] = useState({
+    isOpen: false,
+    content: "",
+    onClickHandler: "",
+    functionData: {},
+  });
 
   const totalPayment = odemeler
     .reduce((n, { tutar }) => n + tutar, 0)
@@ -140,6 +147,38 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
     setOpenSnack(true);
   };
 
+  const projeDeleteHandler = async ({ id }) => {
+    await axiosFetch({
+      method: "POST",
+      url: "/projesil/" + isletmeId + "/" + id,
+    });
+    setSearchData((prevFormData) => ({
+      ...prevFormData,
+      id: isletmeId,
+    }));
+    setOnayBoxInf((prevFormData) => ({
+      ...prevFormData,
+      isOpen: false,
+    }));
+    setOpenSnack(true);
+  };
+
+  const odemeDeleteHandler = async ({ projeId, id }) => {
+    await axiosFetch({
+      method: "POST",
+      url: "/odemesil/" + isletmeId + "/" + projeId + "/" + id,
+    });
+    setSearchData((prevFormData) => ({
+      ...prevFormData,
+      id: isletmeId,
+    }));
+    setOnayBoxInf((prevFormData) => ({
+      ...prevFormData,
+      isOpen: false,
+    }));
+    setOpenSnack(true);
+  };
+
   return (
     <Fragment>
       {resMessage && (
@@ -150,6 +189,9 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
           setOpenSnack={setOpenSnack}
           openSnack={openSnack}
         />
+      )}
+      {onayBoxInf.isOpen && (
+        <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
       )}
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
         <TableCell align="left" width="1%">
@@ -200,15 +242,13 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
               size="small"
               color="primary"
               onClick={() => {
-                axiosFetch({
-                  method: "POST",
-                  url: "/projesil/" + isletmeId + "/" + id,
-                });
-                setSearchData((prevFormData) => ({
+                setOnayBoxInf((prevFormData) => ({
                   ...prevFormData,
-                  id: isletmeId,
+                  isOpen: true,
+                  content: "İlgili Proje Silinecek Onaylıyor musunuz ?",
+                  onClickHandler: projeDeleteHandler,
+                  functionData: { id },
                 }));
-                setOpenSnack(true);
               }}
             >
               <DeleteIcon />
@@ -281,22 +321,15 @@ const HomeTableRow = ({ data, index, setSearchData }) => {
                             <IconButton
                               size="small"
                               color="primary"
-                              onClick={async () => {
-                                await axiosFetch({
-                                  method: "POST",
-                                  url:
-                                    "/odemesil/" +
-                                    isletmeId +
-                                    "/" +
-                                    projeId +
-                                    "/" +
-                                    id,
-                                });
-                                setSearchData((prevFormData) => ({
+                              onClick={() => {
+                                setOnayBoxInf((prevFormData) => ({
                                   ...prevFormData,
-                                  id: isletmeId,
+                                  isOpen: true,
+                                  content:
+                                    "İlgili Ödeme Silinecek Onaylıyor musunuz ?",
+                                  onClickHandler: odemeDeleteHandler,
+                                  functionData: { projeId, id },
                                 }));
-                                setOpenSnack(true);
                               }}
                             >
                               <DeleteIcon />

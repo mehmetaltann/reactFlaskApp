@@ -2,6 +2,7 @@ import DataTableFrame from "../../components/tables/DataTableFrame";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useAxios from "../../hooks/useAxios";
 import InfoBox from "../../components/ui/InfoBox";
+import OnayBox from "../../components/ui/OnayBox";
 import { useCallback, useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import { stringColumn, actionColumn } from "../../components/tables/columns";
@@ -9,9 +10,15 @@ import { stringColumn, actionColumn } from "../../components/tables/columns";
 const IslDataTable = () => {
   const { response, axiosFetch, resStatus, error, resMessage } = useAxios();
   const [openSnack, setOpenSnack] = useState(false);
+  const [onayBoxInf, setOnayBoxInf] = useState({
+    isOpen: false,
+    content: "",
+    onClickHandler: "",
+    functionData: {},
+  });
 
   const fetchIsletmeData = useCallback(async () => {
-    axiosFetch({
+    await axiosFetch({
       method: "GET",
       url: "/isletmeler",
     });
@@ -20,6 +27,19 @@ const IslDataTable = () => {
   useEffect(() => {
     fetchIsletmeData();
   }, []);
+
+  const isletmeDeleteHandler = async ({ isletmeId }) => {
+    await axiosFetch({
+      method: "GET",
+      url: "/isletmesil/" + isletmeId,
+    });
+    setOnayBoxInf((prevFormData) => ({
+      ...prevFormData,
+      isOpen: false,
+    }));
+    setOpenSnack(true);
+    fetchIsletmeData();
+  };
 
   const columns = [
     stringColumn("unvan", "Unvan", 500),
@@ -32,6 +52,7 @@ const IslDataTable = () => {
     actionColumn({
       align: "center",
       renderCell: (params, index) => {
+        const isletmeId = params.row.id;
         if (params.row.numberOfProje) {
           return;
         } else {
@@ -40,12 +61,14 @@ const IslDataTable = () => {
               key={index}
               size="small"
               color="error"
-              onClick={async () => {
-                await axiosFetch({
-                  method: "POST",
-                  url: "/isletmesil/" + params.row.id,
-                });
-                fetchIsletmeData();
+              onClick={() => {
+                setOnayBoxInf((prevFormData) => ({
+                  ...prevFormData,
+                  isOpen: true,
+                  content: "İlgili İşletme Silinecek Onaylıyor musunuz ?",
+                  onClickHandler: isletmeDeleteHandler,
+                  functionData: { isletmeId },
+                }));
               }}
             >
               <DeleteIcon />
@@ -66,6 +89,9 @@ const IslDataTable = () => {
           setOpenSnack={setOpenSnack}
           openSnack={openSnack}
         />
+      )}
+      {onayBoxInf.isOpen && (
+        <OnayBox onayBoxInf={onayBoxInf} setOnayBoxInf={setOnayBoxInf} />
       )}
       <DataTableFrame
         getRowHeight={() => "auto"}
