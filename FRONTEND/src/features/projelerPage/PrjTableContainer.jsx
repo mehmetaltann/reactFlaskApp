@@ -39,7 +39,7 @@ const PrjTableContainer = () => {
         />
       </Stack>
       <DataTableWrapper tableHeight={"78vh"} sxProps={{ p: { xs: 1, md: 2 } }}>
-        <PrjDataTable projeDurum={projeDurum} setProjeDurum={setProjeDurum} />
+        <PrjDataTable projeDurum={projeDurum} />
       </DataTableWrapper>
     </Paper>
   );

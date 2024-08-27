@@ -17,7 +17,7 @@ const useFakeMutation = () => {
     (item) =>
       new Promise((resolve, reject) => {
         setTimeout(() => {
-          if (item.id?.trim() === "") {
+          if (item.karekod?.trim() === "") {
             reject(new Error("Karekod Boş Olamaz"));
           } else {
             resolve({
@@ -75,10 +75,7 @@ const PrjDataTable = ({ projeDurum }) => {
           data: newRecord,
         },
       });
-      await axiosFetch({
-        method: "GET",
-        url: "/projeler/" + newRecord.durum,
-      });
+      fetchProjeData();
       setOpenSnack(true);
       const res = await mutateRow(newRow);
       return res;
