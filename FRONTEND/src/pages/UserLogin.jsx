@@ -11,7 +11,6 @@ import {
 
 const UserLogin = () => {
   const { response, axiosFetch } = useAxios();
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -19,18 +18,8 @@ const UserLogin = () => {
       username: data.get("username"),
       password: data.get("password"),
     };
-    await axiosFetch({
-      method: "POST",
-      url: "/login",
-      requestConfig: {
-        data: userData,
-      },
-    });
-
-    if (response === "var") {
-      localStorage.setItem("token", "ad");
-      window.location = "/";
-    }
+    localStorage.setItem("token", "ad");
+    window.location = "/";
   };
 
   return (
